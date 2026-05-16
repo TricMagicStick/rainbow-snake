@@ -162,54 +162,52 @@
                     ctx.fillRect(headX + px1, headY + py1, 3, 3);
                     ctx.fillRect(headX + px2, headY + py2, 3, 3);
 
-                    // Forked Flicking Tongue
+                    // Slim, Cute Forked Tongue - thinner and more delicate
                     ctx.strokeStyle = '#f33';
-                    ctx.lineWidth = 3.5;
+                    ctx.lineWidth = 2;
                     ctx.lineCap = 'round';
-                    const flick = Math.sin(Date.now() / 55) * 5 + 13;
+                    const flick = Math.sin(Date.now() / 65) * 3.5 + 11;
                     let tx, ty;
 
                     if (dx === 1) {
                         tx = headX + 20; ty = headY + 10;
-                        // left fork
                         ctx.beginPath();
                         ctx.moveTo(tx, ty);
-                        ctx.lineTo(tx + flick, ty - 4);
+                        ctx.lineTo(tx + flick, ty - 2);
                         ctx.stroke();
-                        // right fork
                         ctx.beginPath();
                         ctx.moveTo(tx, ty);
-                        ctx.lineTo(tx + flick, ty + 4);
+                        ctx.lineTo(tx + flick, ty + 2);
                         ctx.stroke();
                     } else if (dx === -1) {
                         tx = headX; ty = headY + 10;
                         ctx.beginPath();
                         ctx.moveTo(tx, ty);
-                        ctx.lineTo(tx - flick, ty - 4);
+                        ctx.lineTo(tx - flick, ty - 2);
                         ctx.stroke();
                         ctx.beginPath();
                         ctx.moveTo(tx, ty);
-                        ctx.lineTo(tx - flick, ty + 4);
+                        ctx.lineTo(tx - flick, ty + 2);
                         ctx.stroke();
                     } else if (dy === -1) {
                         tx = headX + 10; ty = headY;
                         ctx.beginPath();
                         ctx.moveTo(tx, ty);
-                        ctx.lineTo(tx - 4, ty - flick);
+                        ctx.lineTo(tx - 2, ty - flick);
                         ctx.stroke();
                         ctx.beginPath();
                         ctx.moveTo(tx, ty);
-                        ctx.lineTo(tx + 4, ty - flick);
+                        ctx.lineTo(tx + 2, ty - flick);
                         ctx.stroke();
                     } else { // down
                         tx = headX + 10; ty = headY + 20;
                         ctx.beginPath();
                         ctx.moveTo(tx, ty);
-                        ctx.lineTo(tx - 4, ty + flick);
+                        ctx.lineTo(tx - 2, ty + flick);
                         ctx.stroke();
                         ctx.beginPath();
                         ctx.moveTo(tx, ty);
-                        ctx.lineTo(tx + 4, ty + flick);
+                        ctx.lineTo(tx + 2, ty + flick);
                         ctx.stroke();
                     }
                 }
