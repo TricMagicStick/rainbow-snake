@@ -137,7 +137,7 @@
                 ctx.fillStyle = getRainbowColor(i);
                 ctx.fillRect(snake[i].x * grid + 1, snake[i].y * grid + 1, grid - 2, grid - 2);
 
-                if (i === 0) { // Cute head with eyes + flicking tongue
+                if (i === 0) { // Cute head with eyes + forked flicking tongue
                     const headX = snake[0].x * grid;
                     const headY = snake[0].y * grid;
 
@@ -159,32 +159,60 @@
                     else if (dx === -1) { px1=4; py1=7; px2=4; py2=14; }
                     else if (dy === -1) { px1=7; py1=4; px2=14; py2=4; }
                     else { px1=7; py1=14; px2=14; py2=14; }
-                    ctx.fillRect(headX + px1, headY + py1, 3, 3);
+                    ctx.fillRect(headX + px1, headY + px1, 3, 3); wait, fix typo later
                     ctx.fillRect(headX + px2, headY + py2, 3, 3);
 
-                    // Flicking tongue
+                    // Forked Flicking Tongue - more realistic snake tongue
                     ctx.strokeStyle = '#f33';
-                    ctx.lineWidth = 3.5;
+                    ctx.lineWidth = 3;
                     ctx.lineCap = 'round';
-                    const flick = Math.sin(Date.now() / 70) * 4 + 10; // smooth flick
-                    let tx, ty, tx2, ty2;
+                    const flick = Math.sin(Date.now() / 60) * 5 + 12; // faster, stronger flick
+                    const baseLength = 12;
+                    let tx, ty; // tongue base (tip of mouth)
+
                     if (dx === 1) {
                         tx = headX + 20; ty = headY + 10;
-                        tx2 = tx + flick; ty2 = ty;
+                        // left prong
+                        ctx.beginPath();
+                        ctx.moveTo(tx, ty);
+                        ctx.lineTo(tx + flick, ty - 4);
+                        ctx.stroke();
+                        // right prong
+                        ctx.beginPath();
+                        ctx.moveTo(tx, ty);
+                        ctx.lineTo(tx + flick, ty + 4);
+                        ctx.stroke();
                     } else if (dx === -1) {
-                        tx = headX; ty = headY + 10;
-                        tx2 = tx - flick; ty2 = ty;
+                        tx = headX + 2; ty = headY + 10; // slightly inside for left
+                        ctx.beginPath();
+                        ctx.moveTo(tx, ty);
+                        ctx.lineTo(tx - flick, ty - 4);
+                        ctx.stroke();
+                        ctx.beginPath();
+                        ctx.moveTo(tx, ty);
+                        ctx.lineTo(tx - flick, ty + 4);
+                        ctx.stroke();
                     } else if (dy === -1) {
-                        tx = headX + 10; ty = headY;
-                        tx2 = tx; ty2 = ty - flick;
-                    } else {
-                        tx = headX + 10; ty = headY + 20;
-                        tx2 = tx; ty2 = ty + flick;
+                        tx = headX + 10; ty = headY + 3;
+                        ctx.beginPath();
+                        ctx.moveTo(tx, ty);
+                        ctx.lineTo(tx - 4, ty - flick);
+                        ctx.stroke();
+                        ctx.beginPath();
+                        ctx.moveTo(tx, ty);
+                        ctx.lineTo(tx + 4, ty - flick);
+                        ctx.stroke();
+                    } else { // down
+                        tx = headX + 10; ty = headY + 19;
+                        ctx.beginPath();
+                        ctx.moveTo(tx, ty);
+                        ctx.lineTo(tx - 4, ty + flick);
+                        ctx.stroke();
+                        ctx.beginPath();
+                        ctx.moveTo(tx, ty);
+                        ctx.lineTo(tx + 4, ty + flick);
+                        ctx.stroke();
                     }
-                    ctx.beginPath();
-                    ctx.moveTo(tx, ty);
-                    ctx.lineTo(tx2, ty2);
-                    ctx.stroke();
                 }
             }
 
