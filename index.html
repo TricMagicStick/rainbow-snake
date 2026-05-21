@@ -33,17 +33,29 @@
             gap: 10px;
         }
         button {
-            padding: 10px 20px;
-            font-size: 18px;
-            background: #fff;
+            padding: 12px 24px;
+            font-size: 24px;
+            background: rgba(255,255,255,0.9);
             color: #000;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
+            min-width: 60px;
         }
         .score {
             font-size: 24px;
-            margin-bottom: 10px;
+            margin: 10px 0;
+        }
+        #gameOver {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.9);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            display: none;
         }
     </style>
 </head>
@@ -52,6 +64,11 @@
     <div class="score">Score: <span id="score">0</span> | High Score: <span id="highScore">0</span></div>
     <div id="game-container">
         <canvas id="gameCanvas" width="400" height="400"></canvas>
+        <div id="gameOver">
+            <h2>Game Over!</h2>
+            <p>Score: <span id="finalScore">0</span></p>
+            <button onclick="restartGame()">Play Again</button>
+        </div>
     </div>
     <div class="controls">
         <button onclick="changeDirection(0)">↑</button>
@@ -70,49 +87,66 @@
         const gridSize = 20;
         const tileCount = canvas.width / gridSize;
 
-        let snake = [
-            {x: 10, y: 10}
-        ];
+        let snake = [{x: 10, y: 10}];
         let food = {};
         let dx = 0;
         let dy = 0;
         let score = 0;
         let highScore = parseInt(localStorage.getItem('highScore')) || 0;
         let gameInterval;
-        let gameSpeed = 100;
+        let gameSpeed = 120;
+        let gameRunning = false;
 
         document.getElementById('highScore').textContent = highScore;
 
         function randomFood() {
-            food = {
-                x: Math.floor(Math.random() * tileCount),
-                y: Math.floor(Math.random() * tileCount)
-            };
-            for (let segment of snake) {
-                if (segment.x === food.x && segment.y === food.y) {
-                    randomFood();
-                    return;
-                }
-            }
+            do {
+                food = {
+                    x: Math.floor(Math.random() * tileCount),
+                    y: Math.floor(Math.random() * tileCount)
+                };
+            } while (snake.some(segment => segment.x === food.x && segment.y === food.y));
         }
 
-        function drawGame() {
+        function draw() {
+            // Clear
+            ctx.fillStyle = '#111';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw snake
+            snake.forEach((segment, index) => {
+                const hue = (Date.now() / 8 + index * 25) % 360;
+                ctx.fillStyle = `hsl(${hue}, 100%, 65%)`;
+                ctx.fillRect(segment.x * gridSize + 1, segment.y * gridSize + 1, gridSize - 2, gridSize - 2);
+            });
+
+            // Draw food
+            ctx.fillStyle = '#ff0';
+            ctx.beginPath();
+            ctx.arc(food.x * gridSize + gridSize/2, food.y * gridSize + gridSize/2, gridSize/2 - 2, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function update() {
+            if (!gameRunning) return;
+
             const head = {x: snake[0].x + dx, y: snake[0].y + dy};
 
+            // Wall collision
             if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) {
-                gameOver();
+                endGame();
                 return;
             }
 
-            for (let segment of snake) {
-                if (head.x === segment.x && head.y === segment.y) {
-                    gameOver();
-                    return;
-                }
+            // Self collision
+            if (snake.some(segment => segment.x === head.x && segment.y === head.y)) {
+                endGame();
+                return;
             }
 
             snake.unshift(head);
 
+            // Eat food
             if (head.x === food.x && head.y === food.y) {
                 score++;
                 document.getElementById('score').textContent = score;
@@ -122,60 +156,63 @@
                     document.getElementById('highScore').textContent = highScore;
                 }
                 randomFood();
-                if (gameSpeed > 50) gameSpeed -= 2;
+                if (gameSpeed > 60) gameSpeed -= 3;
                 clearInterval(gameInterval);
-                gameInterval = setInterval(drawGame, gameSpeed);
+                gameInterval = setInterval(gameLoop, gameSpeed);
             } else {
                 snake.pop();
             }
-
-            ctx.fillStyle = '#111';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            snake.forEach((segment, index) => {
-                const hue = (Date.now() / 10 + index * 30) % 360;
-                ctx.fillStyle = `hsl(${hue}, 100%, 60%)`;
-                ctx.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize - 2, gridSize - 2);
-            });
-
-            ctx.fillStyle = '#ff0';
-            ctx.beginPath();
-            ctx.arc(food.x * gridSize + gridSize/2, food.y * gridSize + gridSize/2, gridSize/2 - 2, 0, Math.PI * 2);
-            ctx.fill();
         }
 
-        function gameOver() {
+        function gameLoop() {
+            update();
+            draw();
+        }
+
+        function endGame() {
+            gameRunning = false;
             clearInterval(gameInterval);
-            if (confirm(`Game Over! Score: ${score}\nPlay again?`)) {
-                resetGame();
-                startGame();
-            }
-        }
-
-        function resetGame() {
-            snake = [{x: 10, y: 10}];
-            dx = dy = 0;
-            score = 0;
-            document.getElementById('score').textContent = score;
-            gameSpeed = 100;
-            randomFood();
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('gameOver').style.display = 'block';
         }
 
         function startGame() {
             if (gameInterval) clearInterval(gameInterval);
-            gameInterval = setInterval(drawGame, gameSpeed);
+            gameRunning = true;
+            dx = 1; // Start moving right
+            dy = 0;
+            gameInterval = setInterval(gameLoop, gameSpeed);
+        }
+
+        function resetGame() {
+            snake = [{x: 10, y: 10}];
+            dx = 0;
+            dy = 0;
+            score = 0;
+            gameSpeed = 120;
+            document.getElementById('score').textContent = score;
+            document.getElementById('gameOver').style.display = 'none';
+            randomFood();
         }
 
         function changeDirection(dir) {
-            const opposite = {0:1, 1:0, 2:3, 3:2};
-            if (dir === opposite[(dx===1?2:(dx===-1?3:(dy===1?1:0)))]) return;
-            if (dir === 0 && dy !== 1) { dx = 0; dy = -1; }
-            else if (dir === 1 && dy !== -1) { dx = 0; dy = 1; }
-            else if (dir === 2 && dx !== -1) { dx = 1; dy = 0; }
-            else if (dir === 3 && dx !== 1) { dx = -1; dy = 0; }
+            if (!gameRunning) return;
+
+            // Prevent reversing
+            if (dir === 0 && dy === 1) return;
+            if (dir === 1 && dy === -1) return;
+            if (dir === 2 && dx === -1) return;
+            if (dir === 3 && dx === 1) return;
+
+            if (dir === 0) { dx = 0; dy = -1; }
+            else if (dir === 1) { dx = 0; dy = 1; }
+            else if (dir === 2) { dx = 1; dy = 0; }
+            else if (dir === 3) { dx = -1; dy = 0; }
         }
 
+        // Keyboard
         document.addEventListener('keydown', e => {
+            if (!gameRunning) return;
             switch(e.key) {
                 case 'ArrowUp': changeDirection(0); break;
                 case 'ArrowDown': changeDirection(1); break;
@@ -189,9 +226,10 @@
         canvas.addEventListener('touchstart', e => {
             touchStartX = e.changedTouches[0].screenX;
             touchStartY = e.changedTouches[0].screenY;
-        }, false);
+        });
 
         canvas.addEventListener('touchend', e => {
+            if (!gameRunning) return;
             const touchEndX = e.changedTouches[0].screenX;
             const touchEndY = e.changedTouches[0].screenY;
             const deltaX = touchEndX - touchStartX;
@@ -201,10 +239,18 @@
             } else {
                 changeDirection(deltaY > 0 ? 1 : 0);
             }
-        }, false);
+        });
 
+        // Initial setup
         randomFood();
-        startGame();
+        draw(); // Draw initial state
+
+        // Auto start after a short delay or on first move
+        setTimeout(() => {
+            if (dx === 0 && dy === 0) {
+                startGame();
+            }
+        }, 800);
 
         function restartGame() {
             resetGame();
