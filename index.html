@@ -158,7 +158,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v10.3 - ring restored + head poof + stronger tongue</div>
+    <div id="debug">v10.4 - smol cute tongue + visible flick + head poof</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -283,71 +283,71 @@
                 ctx.fillRect(head.x*grid + 13.2, head.y*grid + 13.2, highlightSize, highlightSize);
             }
 
-            // Smaller, cuter Y-forked tongue with stronger, more visible flick
+            // Smol cute Y-forked tongue with nice visible flick (size kept small & cute)
             ctx.strokeStyle = '#ff2222';
-            ctx.lineWidth = 2.2;
+            ctx.lineWidth = 2;
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
-            tongueFrame += 0.32;
-            const flick = Math.sin(tongueFrame) * 1.25;
+            tongueFrame += 0.35; // slightly faster for visible flick
+            const flick = Math.sin(tongueFrame) * 1.15; // nice noticeable flick amplitude
             const hx = head.x * grid;
             const hy = head.y * grid;
-            const stemLen = 5;
-            const forkLen = 6;
-            const spread = 3.5;
+            const stemLen = 4;
+            const forkLen = 5;
+            const spread = 3.2;
 
             ctx.beginPath();
             if (dx === 1) { // right
                 ctx.moveTo(hx + grid - 2, hy + grid/2);
-                ctx.lineTo(hx + grid + stemLen, hy + grid/2 + flick * 0.45);
-                ctx.moveTo(hx + grid + stemLen, hy + grid/2 + flick * 0.45);
-                ctx.lineTo(hx + grid + stemLen + forkLen, hy + grid/2 + flick * 0.45 - spread);
-                ctx.moveTo(hx + grid + stemLen, hy + grid/2 + flick * 0.45);
-                ctx.lineTo(hx + grid + stemLen + forkLen, hy + grid/2 + flick * 0.45 + spread);
+                ctx.lineTo(hx + grid + stemLen, hy + grid/2 + flick * 0.4);
+                ctx.moveTo(hx + grid + stemLen, hy + grid/2 + flick * 0.4);
+                ctx.lineTo(hx + grid + stemLen + forkLen, hy + grid/2 + flick * 0.4 - spread);
+                ctx.moveTo(hx + grid + stemLen, hy + grid/2 + flick * 0.4);
+                ctx.lineTo(hx + grid + stemLen + forkLen, hy + grid/2 + flick * 0.4 + spread);
             } else if (dx === -1) { // left
                 ctx.moveTo(hx + 2, hy + grid/2);
-                ctx.lineTo(hx - stemLen, hy + grid/2 + flick * 0.45);
-                ctx.moveTo(hx - stemLen, hy + grid/2 + flick * 0.45);
-                ctx.lineTo(hx - stemLen - forkLen, hy + grid/2 + flick * 0.45 - spread);
-                ctx.moveTo(hx - stemLen, hy + grid/2 + flick * 0.45);
-                ctx.lineTo(hx - stemLen - forkLen, hy + grid/2 + flick * 0.45 + spread);
+                ctx.lineTo(hx - stemLen, hy + grid/2 + flick * 0.4);
+                ctx.moveTo(hx - stemLen, hy + grid/2 + flick * 0.4);
+                ctx.lineTo(hx - stemLen - forkLen, hy + grid/2 + flick * 0.4 - spread);
+                ctx.moveTo(hx - stemLen, hy + grid/2 + flick * 0.4);
+                ctx.lineTo(hx - stemLen - forkLen, hy + grid/2 + flick * 0.4 + spread);
             } else if (dy === -1) { // up
                 ctx.moveTo(hx + grid/2, hy + 2);
-                ctx.lineTo(hx + grid/2 + flick * 0.35, hy - stemLen);
-                ctx.moveTo(hx + grid/2 + flick * 0.35, hy - stemLen);
-                ctx.lineTo(hx + grid/2 + flick * 0.35 - spread, hy - stemLen - forkLen);
-                ctx.moveTo(hx + grid/2 + flick * 0.35, hy - stemLen);
-                ctx.lineTo(hx + grid/2 + flick * 0.35 + spread, hy - stemLen - forkLen);
+                ctx.lineTo(hx + grid/2 + flick * 0.3, hy - stemLen);
+                ctx.moveTo(hx + grid/2 + flick * 0.3, hy - stemLen);
+                ctx.lineTo(hx + grid/2 + flick * 0.3 - spread, hy - stemLen - forkLen);
+                ctx.moveTo(hx + grid/2 + flick * 0.3, hy - stemLen);
+                ctx.lineTo(hx + grid/2 + flick * 0.3 + spread, hy - stemLen - forkLen);
             } else { // down
                 ctx.moveTo(hx + grid/2, hy + grid - 2);
-                ctx.lineTo(hx + grid/2 + flick * 0.35, hy + grid + stemLen);
-                ctx.moveTo(hx + grid/2 + flick * 0.35, hy + grid + stemLen);
-                ctx.lineTo(hx + grid/2 + flick * 0.35 - spread, hy + grid + stemLen + forkLen);
-                ctx.moveTo(hx + grid/2 + flick * 0.35, hy + grid + stemLen);
-                ctx.lineTo(hx + grid/2 + flick * 0.35 + spread, hy + grid + stemLen + forkLen);
+                ctx.lineTo(hx + grid/2 + flick * 0.3, hy + grid + stemLen);
+                ctx.moveTo(hx + grid/2 + flick * 0.3, hy + grid + stemLen);
+                ctx.lineTo(hx + grid/2 + flick * 0.3 - spread, hy + grid + stemLen + forkLen);
+                ctx.moveTo(hx + grid/2 + flick * 0.3, hy + grid + stemLen);
+                ctx.lineTo(hx + grid/2 + flick * 0.3 + spread, hy + grid + stemLen + forkLen);
             }
             ctx.stroke();
 
-            // Subtle poof near head/mouth on eat + faint ring around food (both effects)
+            // Subtle poof near head/mouth + faint ring around food on eat
             if (eatEffect > 0) {
-                // Head poof (near mouth)
+                // Head poof near mouth (slightly more visible)
                 ctx.save();
-                ctx.fillStyle = 'rgba(255,255,255,0.75)';
+                ctx.fillStyle = 'rgba(255,255,255,0.8)';
                 const poofX = head.x * grid + grid/2;
                 const poofY = head.y * grid + grid/2;
-                const offset = (12 - eatEffect) * 0.7;
-                ctx.fillRect(poofX - 2 - offset*0.3, poofY - 3, 2, 2);
-                ctx.fillRect(poofX + 3 + offset*0.2, poofY - 2, 2, 2);
-                ctx.fillRect(poofX - 1, poofY + 4 + offset*0.4, 2, 2);
-                ctx.fillStyle = 'rgba(255,200,255,0.6)';
-                ctx.fillRect(poofX + 1 - offset*0.1, poofY - 5 - offset*0.2, 2.5, 2.5);
+                const offset = (12 - eatEffect) * 0.6;
+                ctx.fillRect(poofX - 2.5 - offset*0.25, poofY - 3.5, 2.2, 2.2);
+                ctx.fillRect(poofX + 3.5 + offset*0.2, poofY - 2, 2.2, 2.2);
+                ctx.fillRect(poofX - 1, poofY + 4.5 + offset*0.35, 2.2, 2.2);
+                ctx.fillStyle = 'rgba(255,180,255,0.65)';
+                ctx.fillRect(poofX + 1.5 - offset*0.1, poofY - 5.5 - offset*0.15, 2.8, 2.8);
                 ctx.restore();
 
-                // Faint pulsing ring around current food (secondary effect)
+                // Faint pulsing ring around food
                 ctx.save();
                 ctx.strokeStyle = 'rgba(255,255,255,0.55)';
                 ctx.lineWidth = 2;
-                const ringRadius = 7 + (12 - eatEffect) * 1.2;
+                const ringRadius = 7 + (12 - eatEffect) * 1.1;
                 ctx.beginPath();
                 ctx.arc(food.x * grid + grid/2, food.y * grid + grid/2, ringRadius, 0, Math.PI * 2);
                 ctx.stroke();
