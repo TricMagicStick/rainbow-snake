@@ -51,7 +51,7 @@ let dx=1, dy=0;
 let food = {};
 let score = 0;
 let highScore = localStorage.getItem('highScore')||0;
-let gameInterval, gameSpeed=140;
+let gameInterval, gameSpeed=160;
 let directionChanged = false;
 let tongueFrame = 0;
 
@@ -74,59 +74,59 @@ function draw() {
       const hx = h.x * grid;
       const hy = h.y * grid;
 
-      // Bigger solid black eyes - positioned near the front
+      // Bigger solid black eyes
       ctx.fillStyle = '#111';
-      const es = 5;
+      const es = 6;
       if (dx === 1) {
-        ctx.fillRect(hx + 12, hy + 5, es, es);
-        ctx.fillRect(hx + 12, hy + 12, es, es);
+        ctx.fillRect(hx + 11, hy + 5, es, es);
+        ctx.fillRect(hx + 11, hy + 13, es, es);
       } else if (dx === -1) {
         ctx.fillRect(hx + 3, hy + 5, es, es);
-        ctx.fillRect(hx + 3, hy + 12, es, es);
+        ctx.fillRect(hx + 3, hy + 13, es, es);
       } else if (dy === -1) {
         ctx.fillRect(hx + 5, hy + 3, es, es);
-        ctx.fillRect(hx + 12, hy + 3, es, es);
+        ctx.fillRect(hx + 13, hy + 3, es, es);
       } else {
-        ctx.fillRect(hx + 5, hy + 12, es, es);
-        ctx.fillRect(hx + 12, hy + 12, es, es);
+        ctx.fillRect(hx + 5, hy + 11, es, es);
+        ctx.fillRect(hx + 13, hy + 11, es, es);
       }
 
-      // Tongue starts at the EDGE of the head and sticks cleanly OUT. Small external Y-fork.
+      // Clean Y-forked tongue starting OUTSIDE the head
       ctx.strokeStyle = '#ff2222';
-      ctx.lineWidth = 2;
+      ctx.lineWidth = 2.5;
       ctx.lineCap = 'round';
       ctx.beginPath();
-      const f = Math.sin(tongueFrame) * 1.5;
-      const tongueLen = 8;
+      const f = Math.sin(tongueFrame * 2) * 1.8; // slightly faster flick
+      const tongueLen = 9;
 
       if (dx === 1) { // right
-        const startX = hx + grid - 1;
+        const startX = hx + grid;
         const startY = hy + grid/2;
         ctx.moveTo(startX, startY);
-        ctx.lineTo(startX + tongueLen, startY - 2 + f);
+        ctx.lineTo(startX + tongueLen, startY - 3 + f);
         ctx.moveTo(startX, startY);
-        ctx.lineTo(startX + tongueLen, startY + 2 - f);
+        ctx.lineTo(startX + tongueLen, startY + 3 - f);
       } else if (dx === -1) { // left
-        const startX = hx + 1;
+        const startX = hx;
         const startY = hy + grid/2;
         ctx.moveTo(startX, startY);
-        ctx.lineTo(startX - tongueLen, startY - 2 + f);
+        ctx.lineTo(startX - tongueLen, startY - 3 + f);
         ctx.moveTo(startX, startY);
-        ctx.lineTo(startX - tongueLen, startY + 2 - f);
+        ctx.lineTo(startX - tongueLen, startY + 3 - f);
       } else if (dy === -1) { // up
         const startX = hx + grid/2;
-        const startY = hy + 1;
+        const startY = hy;
         ctx.moveTo(startX, startY);
-        ctx.lineTo(startX - 2 + f, startY - tongueLen);
+        ctx.lineTo(startX - 3 + f, startY - tongueLen);
         ctx.moveTo(startX, startY);
-        ctx.lineTo(startX + 2 - f, startY - tongueLen);
+        ctx.lineTo(startX + 3 - f, startY - tongueLen);
       } else { // down
         const startX = hx + grid/2;
-        const startY = hy + grid - 1;
+        const startY = hy + grid;
         ctx.moveTo(startX, startY);
-        ctx.lineTo(startX - 2 + f, startY + tongueLen);
+        ctx.lineTo(startX - 3 + f, startY + tongueLen);
         ctx.moveTo(startX, startY);
-        ctx.lineTo(startX + 2 - f, startY + tongueLen);
+        ctx.lineTo(startX + 3 - f, startY + tongueLen);
       }
       ctx.stroke();
     }
@@ -150,14 +150,14 @@ function update() {
     score++;
     document.getElementById('score').textContent = `Score: ${score} | High Score: ${highScore}`;
     randomFood();
-    if (gameSpeed > 70) gameSpeed -= 4;
+    if (gameSpeed > 70) gameSpeed -= 3;
   } else snake.pop();
   if (score > highScore) {
     highScore = score;
     localStorage.setItem('highScore', highScore);
   }
   draw();
-  tongueFrame += 0.25;
+  tongueFrame += 0.3;
 }
 
 function gameOver() {
@@ -170,7 +170,7 @@ function startGame() {
   snake = [{x:10,y:10}];
   dx=1; dy=0;
   score=0;
-  gameSpeed=140;
+  gameSpeed=160;
   document.getElementById('score').textContent = `Score: 0 | High Score: ${highScore}`;
   document.getElementById('game-over').style.display = 'none';
   randomFood();
