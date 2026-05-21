@@ -71,51 +71,62 @@ function draw() {
 
     if (i===0) {
       const h = snake[0];
-      // Bigger solid black eyes
+      const hx = h.x * grid;
+      const hy = h.y * grid;
+
+      // Bigger solid black eyes - positioned near the front
       ctx.fillStyle = '#111';
-      let es=6;
-      if (dx===1) {
-        ctx.fillRect(h.x*grid+13, h.y*grid+5, es, es);
-        ctx.fillRect(h.x*grid+13, h.y*grid+13, es, es);
-      } else if (dx===-1) {
-        ctx.fillRect(h.x*grid+3, h.y*grid+5, es, es);
-        ctx.fillRect(h.x*grid+3, h.y*grid+13, es, es);
-      } else if (dy===-1) {
-        ctx.fillRect(h.x*grid+5, h.y*grid+3, es, es);
-        ctx.fillRect(h.x*grid+13, h.y*grid+3, es, es);
+      const es = 5;
+      if (dx === 1) {
+        ctx.fillRect(hx + 12, hy + 5, es, es);
+        ctx.fillRect(hx + 12, hy + 12, es, es);
+      } else if (dx === -1) {
+        ctx.fillRect(hx + 3, hy + 5, es, es);
+        ctx.fillRect(hx + 3, hy + 12, es, es);
+      } else if (dy === -1) {
+        ctx.fillRect(hx + 5, hy + 3, es, es);
+        ctx.fillRect(hx + 12, hy + 3, es, es);
       } else {
-        ctx.fillRect(h.x*grid+5, h.y*grid+13, es, es);
-        ctx.fillRect(h.x*grid+13, h.y*grid+13, es, es);
+        ctx.fillRect(hx + 5, hy + 12, es, es);
+        ctx.fillRect(hx + 12, hy + 12, es, es);
       }
 
-      // Small clear Y-fork tongue
-      ctx.strokeStyle = '#ff0000';
-      ctx.lineWidth = 2.5;
-      ctx.lineJoin = 'round';
+      // Tongue starts at the EDGE of the head and sticks cleanly OUT. Small external Y-fork.
+      ctx.strokeStyle = '#ff2222';
+      ctx.lineWidth = 2;
+      ctx.lineCap = 'round';
       ctx.beginPath();
-      let hx = h.x*grid + 10;
-      let hy = h.y*grid + 10;
-      let f = Math.sin(tongueFrame)*2.5;
-      if (dx===1) {
-        ctx.moveTo(hx+8, hy);
-        ctx.lineTo(hx+18, hy-3+f);
-        ctx.moveTo(hx+8, hy);
-        ctx.lineTo(hx+18, hy+3-f);
-      } else if (dx===-1) {
-        ctx.moveTo(hx-8, hy);
-        ctx.lineTo(hx-18, hy-3+f);
-        ctx.moveTo(hx-8, hy);
-        ctx.lineTo(hx-18, hy+3-f);
-      } else if (dy===-1) {
-        ctx.moveTo(hx, hy-8);
-        ctx.lineTo(hx-3+f, hy-18);
-        ctx.moveTo(hx, hy-8);
-        ctx.lineTo(hx+3-f, hy-18);
-      } else {
-        ctx.moveTo(hx, hy+8);
-        ctx.lineTo(hx-3+f, hy+18);
-        ctx.moveTo(hx, hy+8);
-        ctx.lineTo(hx+3-f, hy+18);
+      const f = Math.sin(tongueFrame) * 1.5;
+      const tongueLen = 8;
+
+      if (dx === 1) { // right
+        const startX = hx + grid - 1;
+        const startY = hy + grid/2;
+        ctx.moveTo(startX, startY);
+        ctx.lineTo(startX + tongueLen, startY - 2 + f);
+        ctx.moveTo(startX, startY);
+        ctx.lineTo(startX + tongueLen, startY + 2 - f);
+      } else if (dx === -1) { // left
+        const startX = hx + 1;
+        const startY = hy + grid/2;
+        ctx.moveTo(startX, startY);
+        ctx.lineTo(startX - tongueLen, startY - 2 + f);
+        ctx.moveTo(startX, startY);
+        ctx.lineTo(startX - tongueLen, startY + 2 - f);
+      } else if (dy === -1) { // up
+        const startX = hx + grid/2;
+        const startY = hy + 1;
+        ctx.moveTo(startX, startY);
+        ctx.lineTo(startX - 2 + f, startY - tongueLen);
+        ctx.moveTo(startX, startY);
+        ctx.lineTo(startX + 2 - f, startY - tongueLen);
+      } else { // down
+        const startX = hx + grid/2;
+        const startY = hy + grid - 1;
+        ctx.moveTo(startX, startY);
+        ctx.lineTo(startX - 2 + f, startY + tongueLen);
+        ctx.moveTo(startX, startY);
+        ctx.lineTo(startX + 2 - f, startY + tongueLen);
       }
       ctx.stroke();
     }
@@ -123,7 +134,7 @@ function draw() {
 
   ctx.fillStyle = food.color;
   ctx.beginPath();
-  ctx.arc(food.x*grid +10, food.y*grid +10, 8, 0, Math.PI*2);
+  ctx.arc(food.x*grid + 10, food.y*grid + 10, 7, 0, Math.PI*2);
   ctx.fill();
 }
 
@@ -146,7 +157,7 @@ function update() {
     localStorage.setItem('highScore', highScore);
   }
   draw();
-  tongueFrame += 0.3;
+  tongueFrame += 0.25;
 }
 
 function gameOver() {
@@ -181,24 +192,21 @@ function changeDirection(ndx, ndy) {
   directionChanged = true;
 }
 
-// Swipe and keyboard omitted for brevity but included in full version
 let tsX, tsY;
 canvas.addEventListener('touchstart', e=>{tsX=e.touches[0].clientX; tsY=e.touches[0].clientY;});
 canvas.addEventListener('touchend', e=>{
   const dX = e.changedTouches[0].clientX - tsX;
   const dY = e.changedTouches[0].clientY - tsY;
-  if (Math.abs(dX) > Math.abs(dY)) changeDirection(dX>0?1:-1, 0);
-  else changeDirection(0, dY>0?1:-1);
+  if (Math.abs(dX) > Math.abs(dY)) changeDirection(dX>40?1:-1, 0);
+  else changeDirection(0, dY>40?1:-1);
 });
 
 document.addEventListener('keydown', e=> {
-  if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) e.preventDefault();
-  switch(e.key){
-    case 'ArrowUp': changeDirection(0,-1);break;
-    case 'ArrowDown': changeDirection(0,1);break;
-    case 'ArrowLeft': changeDirection(-1,0);break;
-    case 'ArrowRight': changeDirection(1,0);break;
-  }
+  if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) e.preventDefault();
+  if (e.key === 'ArrowUp') changeDirection(0,-1);
+  if (e.key === 'ArrowDown') changeDirection(0,1);
+  if (e.key === 'ArrowLeft') changeDirection(-1,0);
+  if (e.key === 'ArrowRight') changeDirection(1,0);
 });
 
 startGame();
