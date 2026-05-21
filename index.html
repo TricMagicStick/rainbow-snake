@@ -166,22 +166,21 @@
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             drawStars();
 
-            // Body segments with subtle polish outline
+            // Body segments with stronger subtle white outline for better definition
             for (let i = 1; i < snake.length; i++) {
                 ctx.fillStyle = rainbowColors[ i % rainbowColors.length ];
                 ctx.fillRect(snake[i].x * grid + 1, snake[i].y * grid + 1, grid - 2, grid - 2);
-                // Subtle white outline for definition and polish
-                ctx.strokeStyle = 'rgba(255,255,255,0.25)';
-                ctx.lineWidth = 1;
+                ctx.strokeStyle = 'rgba(255,255,255,0.38)';
+                ctx.lineWidth = 1.2;
                 ctx.strokeRect(snake[i].x * grid + 1, snake[i].y * grid + 1, grid - 2, grid - 2);
             }
 
-            // Head always green with subtle polish outline
+            // Head always green with stronger subtle white outline
             const head = snake[0];
             ctx.fillStyle = '#00ff00';
             ctx.fillRect(head.x * grid + 1, head.y * grid + 1, grid - 2, grid - 2);
-            ctx.strokeStyle = 'rgba(255,255,255,0.3)';
-            ctx.lineWidth = 1.5;
+            ctx.strokeStyle = 'rgba(255,255,255,0.45)';
+            ctx.lineWidth = 1.8;
             ctx.strokeRect(head.x * grid + 1, head.y * grid + 1, grid - 2, grid - 2);
 
             // Eyes - refined size and positioning for cuter, more polished look
