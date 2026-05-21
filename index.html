@@ -158,7 +158,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v9.2 - restart button position refined per markings</div>
+    <div id="debug">v10 - eye highlights + tongue polish</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -252,24 +252,37 @@
             ctx.lineWidth = 1.8;
             ctx.strokeRect(head.x * grid + 1, head.y * grid + 1, grid - 2, grid - 2);
 
-            // Eyes - refined size and positioning for cuter, more polished look
+            // Eyes - refined with subtle specular highlight for cuter, more polished look
             ctx.fillStyle = '#111111';
             const eyeSize = 5.5;
+            const highlightSize = 1.8;
             if (dx === 1) { // right
                 ctx.fillRect(head.x*grid + 12.5, head.y*grid + 5.5, eyeSize, eyeSize);
                 ctx.fillRect(head.x*grid + 12.5, head.y*grid + 12.5, eyeSize, eyeSize);
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(head.x*grid + 13.2, head.y*grid + 6.2, highlightSize, highlightSize);
+                ctx.fillRect(head.x*grid + 13.2, head.y*grid + 13.2, highlightSize, highlightSize);
             } else if (dx === -1) { // left
                 ctx.fillRect(head.x*grid + 2.5, head.y*grid + 5.5, eyeSize, eyeSize);
                 ctx.fillRect(head.x*grid + 2.5, head.y*grid + 12.5, eyeSize, eyeSize);
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(head.x*grid + 3.2, head.y*grid + 6.2, highlightSize, highlightSize);
+                ctx.fillRect(head.x*grid + 3.2, head.y*grid + 13.2, highlightSize, highlightSize);
             } else if (dy === -1) { // up
                 ctx.fillRect(head.x*grid + 5.5, head.y*grid + 2.5, eyeSize, eyeSize);
                 ctx.fillRect(head.x*grid + 12.5, head.y*grid + 2.5, eyeSize, eyeSize);
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(head.x*grid + 6.2, head.y*grid + 3.2, highlightSize, highlightSize);
+                ctx.fillRect(head.x*grid + 13.2, head.y*grid + 3.2, highlightSize, highlightSize);
             } else { // down
                 ctx.fillRect(head.x*grid + 5.5, head.y*grid + 12.5, eyeSize, eyeSize);
                 ctx.fillRect(head.x*grid + 12.5, head.y*grid + 12.5, eyeSize, eyeSize);
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(head.x*grid + 6.2, head.y*grid + 13.2, highlightSize, highlightSize);
+                ctx.fillRect(head.x*grid + 13.2, head.y*grid + 13.2, highlightSize, highlightSize);
             }
 
-            // Smaller, cuter Y-forked tongue with slightly gentler flick
+            // Smaller, cuter Y-forked tongue with slightly gentler, more organic flick
             ctx.strokeStyle = '#ff2222';
             ctx.lineWidth = 2;
             ctx.lineCap = 'round';
@@ -280,7 +293,7 @@
             const hy = head.y * grid;
             const stemLen = 4;
             const forkLen = 5;
-            const spread = 3;
+            const spread = 3.2; // slightly refined spread for organic feel
 
             ctx.beginPath();
             if (dx === 1) { // right
