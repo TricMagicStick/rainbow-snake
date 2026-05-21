@@ -134,7 +134,7 @@
         let score = 0;
         let highScore = localStorage.getItem('highScore') || 0;
         let gameInterval;
-        let gameSpeed = 120;
+        let gameSpeed = 140;
         let directionQueue = [];
         let isGameOver = false;
 
@@ -154,7 +154,6 @@
             ctx.fillStyle = '#000';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Draw snake
             snake.forEach((segment, i) => {
                 ctx.fillStyle = rainbowColors[i % rainbowColors.length];
                 ctx.fillRect(segment.x * grid, segment.y * grid, grid, grid);
@@ -162,36 +161,38 @@
                 ctx.lineWidth = 2;
                 ctx.strokeRect(segment.x * grid + 2, segment.y * grid + 2, grid - 4, grid - 4);
 
-                // Head
                 if (i === 0) {
-                    // Eyes
+                    // Bigger solid black eyes
                     ctx.fillStyle = '#000';
-                    let eyeOffsetX = dx * 5;
-                    let eyeOffsetY = dy * 5;
-                    ctx.fillRect(segment.x * grid + 6 + eyeOffsetX, segment.y * grid + 6, 5, 5);
-                    ctx.fillRect(segment.x * grid + 12 + eyeOffsetX, segment.y * grid + 6, 5, 5);
+                    let eyeSize = 6;
+                    let eyeY = segment.y * grid + 6;
+                    let eyeX1 = segment.x * grid + 4;
+                    let eyeX2 = segment.x * grid + 13;
+                    ctx.fillRect(eyeX1, eyeY, eyeSize, eyeSize);
+                    ctx.fillRect(eyeX2, eyeY, eyeSize, eyeSize);
 
-                    // Tongue
+                    // Small clear Y-forked tongue
                     ctx.strokeStyle = '#ff2222';
-                    ctx.lineWidth = 3;
+                    ctx.lineWidth = 2.5;
+                    let hx = segment.x * grid + grid / 2;
+                    let hy = segment.y * grid + grid / 2;
+                    let tx = hx + dx * 18;
+                    let ty = hy + dy * 6;
                     ctx.beginPath();
-                    let tx = segment.x * grid + grid/2 + dx * 12;
-                    let ty = segment.y * grid + grid/2 + dy * 8;
-                    ctx.moveTo(segment.x * grid + grid/2, segment.y * grid + grid/2);
+                    ctx.moveTo(hx + dx*7, hy + dy*5);
                     ctx.lineTo(tx, ty);
                     ctx.stroke();
 
                     // Fork
                     ctx.beginPath();
                     ctx.moveTo(tx, ty);
-                    ctx.lineTo(tx - 4, ty - 4);
+                    ctx.lineTo(tx - 5*dx - 4*dy, ty - 4*dy + 4*dx);
                     ctx.moveTo(tx, ty);
-                    ctx.lineTo(tx + 4, ty - 4);
+                    ctx.lineTo(tx - 5*dx + 4*dy, ty - 4*dy - 4*dx);
                     ctx.stroke();
                 }
             });
 
-            // Draw food
             ctx.fillStyle = food.color;
             ctx.beginPath();
             ctx.arc(food.x * grid + grid/2, food.y * grid + grid/2, grid/2 - 2, 0, Math.PI * 2);
@@ -201,7 +202,6 @@
         function update() {
             if (isGameOver) return;
 
-            // Process queued direction
             if (directionQueue.length > 0) {
                 const nextDir = directionQueue.shift();
                 if (!(nextDir.dx === -dx && nextDir.dy === -dy)) {
@@ -212,26 +212,23 @@
 
             const head = {x: snake[0].x + dx, y: snake[0].y + dy};
 
-            // Wall collision
             if (head.x < 0 || head.x >= cols || head.y < 0 || head.y >= rows) {
                 endGame();
                 return;
             }
 
-            // Self collision
-            if (snake.some(segment => segment.x === head.x && segment.y === head.y)) {
+            if (snake.some((segment, index) => index > 0 && segment.x === head.x && segment.y === head.y)) {
                 endGame();
                 return;
             }
 
             snake.unshift(head);
 
-            // Eat food
             if (head.x === food.x && head.y === food.y) {
                 score++;
                 document.getElementById('score').textContent = `Score: ${score} | High Score: ${highScore}`;
                 randomFood();
-                if (gameSpeed > 50) gameSpeed -= 3;
+                if (gameSpeed > 60) gameSpeed -= 3;
             } else {
                 snake.pop();
             }
@@ -278,7 +275,6 @@
             startGame();
         }
 
-        // Swipe support
         let touchStartX = 0;
         let touchStartY = 0;
 
@@ -293,7 +289,6 @@
             const touchEndY = e.changedTouches[0].screenY;
             const dxTouch = touchEndX - touchStartX;
             const dyTouch = touchEndY - touchStartY;
-
             if (Math.abs(dxTouch) > 30 || Math.abs(dyTouch) > 30) {
                 if (Math.abs(dxTouch) > Math.abs(dyTouch)) {
                     changeDir(dxTouch > 0 ? 1 : -1, 0);
@@ -303,7 +298,6 @@
             }
         });
 
-        // Keyboard support
         document.addEventListener('keydown', e => {
             switch(e.key) {
                 case 'ArrowUp': changeDir(0, -1); break;
@@ -313,7 +307,6 @@
             }
         });
 
-        // Initial start
         window.onload = () => {
             document.getElementById('score').textContent = `Score: 0 | High Score: ${highScore}`;
             startGame();
