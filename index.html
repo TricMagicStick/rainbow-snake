@@ -2,300 +2,214 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rainbow Snake</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-        
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body { 
-            background:#0a0a0a; 
-            color:#0ff; 
-            font-family:'Press Start 2P',system-ui; 
-            display:flex; 
-            justify-content:center; 
-            align-items:center; 
-            min-height:100vh; 
-            touch-action:manipulation; 
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: linear-gradient(to bottom, #0f0c29, #302b63, #24243e);
+            font-family: 'Courier New', monospace;
+            color: white;
+            overflow: hidden;
         }
-        .container { text-align:center; max-width:420px; width:100%; }
-        
-        h1 { 
-            font-size:28px; 
-            margin-bottom:8px; 
-            background: linear-gradient(90deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-size: 400% 400%;
-            animation: rainbowCycle 3s linear infinite;
-            text-shadow:0 0 20px #0ff;
+        #game-container {
+            position: relative;
         }
-        
-        @keyframes rainbowCycle {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        canvas {
+            border: 4px solid #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(255,255,255,0.5);
+            image-rendering: pixelated;
         }
-        
-        #score { font-size:18px; margin-bottom:12px; color:#0f0; }
-        .game-container { 
-            position:relative; 
-            margin:0 auto 20px; 
-            border:8px solid #0ff; 
-            box-shadow:0 0 30px #0ff; 
-            background:#000; 
+        .controls {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
         }
-        canvas { display:block; image-rendering:pixelated; }
-        
-        #controls { display:flex; flex-direction:column; align-items:center; gap:10px; margin:20px 0; }
-        .arrow-btn { 
-            background:#0ff; color:#000; border:none; font-size:32px; 
-            width:70px; height:70px; border-radius:12px; 
-            display:flex; align-items:center; justify-content:center; 
-            box-shadow:0 0 15px #0ff; cursor:pointer; 
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+            background: #fff;
+            color: #000;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
         }
-        .horizontal-controls { display:flex; gap:10px; }
-        .restart-btn { 
-            background:#0f0; color:#000; border:none; padding:12px 30px; 
-            font-size:16px; border-radius:8px; margin-top:10px; 
-            box-shadow:0 0 15px #0f0; 
+        .score {
+            font-size: 24px;
+            margin-bottom: 10px;
         }
-        p { margin-top:15px; font-size:12px; opacity:0.8; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Rainbow Snake</h1>
-        <div id="score">Score: 0 | High Score: 0</div>
-        <div class="game-container">
-            <canvas id="gameCanvas" width="400" height="400"></canvas>
-        </div>
-        <div id="controls">
-            <button id="upBtn" class="arrow-btn">↑</button>
-            <div class="horizontal-controls">
-                <button id="leftBtn" class="arrow-btn">←</button>
-                <button id="downBtn" class="arrow-btn">↓</button>
-                <button id="rightBtn" class="arrow-btn">→</button>
-            </div>
-        </div>
-        <button id="restartBtn" class="restart-btn">Restart Game</button>
-        <p>Tap arrow buttons or swipe on the game area to move</p>
+    <h1>Rainbow Snake</h1>
+    <div class="score">Score: <span id="score">0</span> | High Score: <span id="highScore">0</span></div>
+    <div id="game-container">
+        <canvas id="gameCanvas" width="400" height="400"></canvas>
     </div>
+    <div class="controls">
+        <button onclick="changeDirection(0)">↑</button>
+    </div>
+    <div class="controls">
+        <button onclick="changeDirection(3)">←</button>
+        <button onclick="changeDirection(1)">↓</button>
+        <button onclick="changeDirection(2)">→</button>
+    </div>
+    <button onclick="restartGame()">Restart Game</button>
+    <p>Tap arrow buttons or swipe on the game area to move</p>
 
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
-        const grid = 20;
-        const cols = canvas.width / grid;
-        const rows = canvas.height / grid;
+        const gridSize = 20;
+        const tileCount = canvas.width / gridSize;
 
-        let snake = [{x: 10, y: 10}];
-        let dx = 1, dy = 0;
-        let food = {x: 15, y: 15, color: '#ff0'};
+        let snake = [
+            {x: 10, y: 10}
+        ];
+        let food = {};
+        let dx = 0;
+        let dy = 0;
         let score = 0;
-        let highScore = localStorage.getItem('rainbowSnakeHigh') || 0;
-        let gameInterval, speed = 160;
-        let gameOverFlag = false;
+        let highScore = parseInt(localStorage.getItem('highScore')) || 0;
+        let gameInterval;
+        let gameSpeed = 100;
 
-        function getRainbowColor(i) { 
-            return `hsl(${((i * 28) + 120) % 360}, 100%, 60%)`;
-        }
+        document.getElementById('highScore').textContent = highScore;
 
-        function playEatSound() {
-            try {
-                const audio = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = audio.createOscillator();
-                osc.frequency.value = 800; osc.connect(audio.destination); osc.start(); setTimeout(() => osc.stop(), 80);
-            } catch(e) {}
-        }
-
-        function playGameOverSound() {
-            try {
-                const audio = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = audio.createOscillator();
-                osc.frequency.value = 200; osc.connect(audio.destination); osc.start(); setTimeout(() => osc.stop(), 400);
-            } catch(e) {}
-        }
-
-        function updateScore() {
-            document.getElementById('score').textContent = `Score: ${score} | High Score: ${highScore}`;
-        }
-
-        function generateFood() {
-            do {
-                food.x = Math.floor(Math.random() * cols);
-                food.y = Math.floor(Math.random() * rows);
-            } while (snake.some(s => s.x === food.x && s.y === food.y));
-            food.color = getRainbowColor(snake.length);
-        }
-
-        function draw() {
-            ctx.fillStyle = '#000';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            for (let i = 0; i < snake.length; i++) {
-                ctx.fillStyle = getRainbowColor(i);
-                ctx.fillRect(snake[i].x * grid + 1, snake[i].y * grid + 1, grid - 2, grid - 2);
-
-                if (i === 0) {
-                    const headX = snake[0].x * grid;
-                    const headY = snake[0].y * grid;
-
-                    // Eyes
-                    ctx.fillStyle = '#fff';
-                    let ex1, ey1, ex2, ey2;
-                    if (dx === 1) { ex1=12; ey1=6; ex2=12; ey2=13; }
-                    else if (dx === -1) { ex1=5; ey1=6; ex2=5; ey2=13; }
-                    else if (dy === -1) { ex1=6; ey1=5; ex2=13; ey2=5; }
-                    else { ex1=6; ey1=12; ex2=13; ey2=12; }
-                    
-                    ctx.fillRect(headX + ex1, headY + ey1, 6, 6);
-                    ctx.fillRect(headX + ex2, headY + ey2, 6, 6);
-
-                    // Pupils
-                    ctx.fillStyle = '#000';
-                    let px1, py1, px2, py2;
-                    if (dx === 1) { px1=15; py1=7; px2=15; py2=14; }
-                    else if (dx === -1) { px1=4; py1=7; px2=4; py2=14; }
-                    else if (dy === -1) { px1=7; py1=4; px2=14; py2=4; }
-                    else { px1=7; py1=14; px2=14; py2=14; }
-                    ctx.fillRect(headX + px1, headY + py1, 3, 3);
-                    ctx.fillRect(headX + px2, headY + py2, 3, 3);
-
-                    // Cute thin Y-shaped forked tongue
-                    ctx.strokeStyle = '#f33';
-                    ctx.lineWidth = 1.8;
-                    ctx.lineCap = 'round';
-                    const flick = Math.sin(Date.now() / 80) * 2.5 + 8;
-                    let tx, ty, tx2, ty2, tx3, ty3;
-                    if (dx === 1) {
-                        tx = headX + 20; ty = headY + 10;
-                        tx2 = tx + flick; ty2 = ty - 3;
-                        tx3 = tx + flick; ty3 = ty + 3;
-                    } else if (dx === -1) {
-                        tx = headX; ty = headY + 10;
-                        tx2 = tx - flick; ty2 = ty - 3;
-                        tx3 = tx - flick; ty3 = ty + 3;
-                    } else if (dy === -1) {
-                        tx = headX + 10; ty = headY;
-                        tx2 = tx - 3; ty2 = ty - flick;
-                        tx3 = tx + 3; ty3 = ty - flick;
-                    } else {
-                        tx = headX + 10; ty = headY + 20;
-                        tx2 = tx - 3; ty2 = ty + flick;
-                        tx3 = tx + 3; ty3 = ty + flick;
-                    }
-                    ctx.beginPath();
-                    ctx.moveTo(tx, ty);
-                    ctx.lineTo(tx2, ty2);
-                    ctx.moveTo(tx, ty);
-                    ctx.lineTo(tx3, ty3);
-                    ctx.stroke();
+        function randomFood() {
+            food = {
+                x: Math.floor(Math.random() * tileCount),
+                y: Math.floor(Math.random() * tileCount)
+            };
+            for (let segment of snake) {
+                if (segment.x === food.x && segment.y === food.y) {
+                    randomFood();
+                    return;
                 }
             }
-
-            ctx.fillStyle = food.color;
-            ctx.fillRect(food.x*grid + 2, food.y*grid + 2, grid-4, grid-4);
         }
 
-        function move() {
-            if (gameOverFlag) return;
+        function drawGame() {
             const head = {x: snake[0].x + dx, y: snake[0].y + dy};
 
-            if (head.x < 0 || head.x >= cols || head.y < 0 || head.y >= rows) return endGame();
-            for (let s of snake) if (s.x === head.x && s.y === head.y) return endGame();
+            if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) {
+                gameOver();
+                return;
+            }
+
+            for (let segment of snake) {
+                if (head.x === segment.x && head.y === segment.y) {
+                    gameOver();
+                    return;
+                }
+            }
 
             snake.unshift(head);
 
             if (head.x === food.x && head.y === food.y) {
                 score++;
-                playEatSound();
-                updateScore();
-                generateFood();
-                if (speed > 70) speed -= 4;
+                document.getElementById('score').textContent = score;
+                if (score > highScore) {
+                    highScore = score;
+                    localStorage.setItem('highScore', highScore);
+                    document.getElementById('highScore').textContent = highScore;
+                }
+                randomFood();
+                if (gameSpeed > 50) gameSpeed -= 2;
                 clearInterval(gameInterval);
-                gameInterval = setInterval(gameLoop, speed);
+                gameInterval = setInterval(drawGame, gameSpeed);
             } else {
                 snake.pop();
             }
-            draw();
+
+            ctx.fillStyle = '#111';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            snake.forEach((segment, index) => {
+                const hue = (Date.now() / 10 + index * 30) % 360;
+                ctx.fillStyle = `hsl(${hue}, 100%, 60%)`;
+                ctx.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize - 2, gridSize - 2);
+            });
+
+            ctx.fillStyle = '#ff0';
+            ctx.beginPath();
+            ctx.arc(food.x * gridSize + gridSize/2, food.y * gridSize + gridSize/2, gridSize/2 - 2, 0, Math.PI * 2);
+            ctx.fill();
         }
 
-        function gameLoop() { move(); }
-
-        function changeDirection(newDx, newDy) {
-            if (gameOverFlag || (newDx === -dx && newDy === -dy)) return;
-            dx = newDx; dy = newDy;
-        }
-
-        function endGame() {
-            gameOverFlag = true;
-            playGameOverSound();
-            if (score > highScore) {
-                highScore = score;
-                localStorage.setItem('rainbowSnakeHigh', highScore);
+        function gameOver() {
+            clearInterval(gameInterval);
+            if (confirm(`Game Over! Score: ${score}\nPlay again?`)) {
+                resetGame();
+                startGame();
             }
-            updateScore();
-            setTimeout(() => {
-                if (confirm(`Game Over!
-Score: ${score}
-High Score: ${highScore}
-
-Play again?`)) resetGame();
-            }, 150);
         }
 
         function resetGame() {
-            snake = [{x:10, y:10}];
-            dx = 1; dy = 0;
-            score = 0; speed = 160; gameOverFlag = false;
-            generateFood();
-            updateScore();
-            clearInterval(gameInterval);
-            gameInterval = setInterval(gameLoop, speed);
-            draw();
-        }
-
-        function setupControls() {
-            const dirs = {
-                upBtn: {dx:0, dy:-1}, downBtn: {dx:0, dy:1},
-                leftBtn: {dx:-1, dy:0}, rightBtn: {dx:1, dy:0}
-            };
-            Object.keys(dirs).forEach(id => {
-                const btn = document.getElementById(id);
-                if (btn) {
-                    btn.addEventListener('click', e => { e.preventDefault(); changeDirection(dirs[id].dx, dirs[id].dy); });
-                    btn.addEventListener('touchstart', e => { e.preventDefault(); changeDirection(dirs[id].dx, dirs[id].dy); });
-                }
-            });
-
-            document.getElementById('restartBtn').addEventListener('click', e => { e.preventDefault(); resetGame(); });
-            document.getElementById('restartBtn').addEventListener('touchstart', e => { e.preventDefault(); resetGame(); });
-
-            let startX, startY;
-            canvas.addEventListener('touchstart', e => { startX = e.changedTouches[0].screenX; startY = e.changedTouches[0].screenY; });
-            canvas.addEventListener('touchend', e => {
-                if (gameOverFlag) return;
-                const endX = e.changedTouches[0].screenX;
-                const endY = e.changedTouches[0].screenY;
-                const diffX = endX - startX;
-                const diffY = endY - startY;
-                if (Math.abs(diffX) > 40 || Math.abs(diffY) > 40) {
-                    if (Math.abs(diffX) > Math.abs(diffY)) changeDirection(diffX > 0 ? 1 : -1, 0);
-                    else changeDirection(0, diffY > 0 ? 1 : -1);
-                }
-            });
+            snake = [{x: 10, y: 10}];
+            dx = dy = 0;
+            score = 0;
+            document.getElementById('score').textContent = score;
+            gameSpeed = 100;
+            randomFood();
         }
 
         function startGame() {
-            updateScore();
-            generateFood();
-            draw();
-            setupControls();
-            gameInterval = setInterval(gameLoop, speed);
+            if (gameInterval) clearInterval(gameInterval);
+            gameInterval = setInterval(drawGame, gameSpeed);
         }
 
-        window.onload = startGame;
+        function changeDirection(dir) {
+            const opposite = {0:1, 1:0, 2:3, 3:2};
+            if (dir === opposite[(dx===1?2:(dx===-1?3:(dy===1?1:0)))]) return;
+            if (dir === 0 && dy !== 1) { dx = 0; dy = -1; }
+            else if (dir === 1 && dy !== -1) { dx = 0; dy = 1; }
+            else if (dir === 2 && dx !== -1) { dx = 1; dy = 0; }
+            else if (dir === 3 && dx !== 1) { dx = -1; dy = 0; }
+        }
+
+        document.addEventListener('keydown', e => {
+            switch(e.key) {
+                case 'ArrowUp': changeDirection(0); break;
+                case 'ArrowDown': changeDirection(1); break;
+                case 'ArrowRight': changeDirection(2); break;
+                case 'ArrowLeft': changeDirection(3); break;
+            }
+        });
+
+        // Touch swipe
+        let touchStartX, touchStartY;
+        canvas.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
+        }, false);
+
+        canvas.addEventListener('touchend', e => {
+            const touchEndX = e.changedTouches[0].screenX;
+            const touchEndY = e.changedTouches[0].screenY;
+            const deltaX = touchEndX - touchStartX;
+            const deltaY = touchEndY - touchStartY;
+            if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                changeDirection(deltaX > 0 ? 2 : 3);
+            } else {
+                changeDirection(deltaY > 0 ? 1 : 0);
+            }
+        }, false);
+
+        randomFood();
+        startGame();
+
+        function restartGame() {
+            resetGame();
+            startGame();
+        }
     </script>
 </body>
 </html>
