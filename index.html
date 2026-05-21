@@ -69,28 +69,30 @@
         }
         #restart {
             position: absolute;
-            top: 8px;
-            right: 8px;
-            width: 32px;
-            height: 32px;
+            top: 50%;
+            right: -42px;
+            transform: translateY(-50%);
+            width: 34px;
+            height: 34px;
             border-radius: 50%;
             background: #0088ff;
             color: white;
-            border: 2px solid #ffffff44;
+            border: 2px solid #ffffff55;
             font-size: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 2px 8px rgba(0,136,255,0.4);
+            box-shadow: 0 2px 10px rgba(0,136,255,0.45);
             transition: transform 0.1s ease, background 0.1s ease, box-shadow 0.1s ease;
-            z-index: 5;
+            z-index: 20;
             padding: 0;
             line-height: 1;
+            cursor: pointer;
         }
         #restart:active {
-            transform: scale(0.9);
+            transform: scale(0.88) translateY(-50%);
             background: #0066cc;
-            box-shadow: 0 1px 4px rgba(0,136,255,0.6);
+            box-shadow: 0 1px 6px rgba(0,136,255,0.7);
         }
         #gameOver {
             position: absolute;
@@ -121,6 +123,8 @@
             font-size: 1.05em;
         }
         #gameOver button {
+            display: block;
+            margin: 0 auto;
             background: #1a001a;
             color: #ffffff;
             border: 2px solid #ff00ff;
@@ -149,7 +153,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v7 - mobile gameover + side restart</div>
+    <div id="debug">v8 - restart side position + centered play again</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -205,7 +209,7 @@
             for (let i = 0; i < 80; i++) {
                 stars.push({
                     x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
+                    y: Math.random() * canvas.height;
                     size: Math.random() * 2 + 0.5
                 });
             }
