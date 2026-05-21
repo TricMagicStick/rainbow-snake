@@ -68,23 +68,52 @@
             background: rgba(255,255,255,0.3);
         }
         #restart {
-            margin-top: 10px;
-            padding: 12px 30px;
-            font-size: 18px;
+            margin-top: 18px;
+            padding: 10px 24px;
+            font-size: 16px;
             width: auto;
+            height: auto;
         }
         #gameOver {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(0,0,0,0.9);
-            padding: 30px;
-            border-radius: 20px;
+            background: rgba(0,0,0,0.92);
+            padding: 28px 32px;
+            border-radius: 18px;
             text-align: center;
             display: none;
             border: 3px solid #ff00ff;
+            box-shadow: 0 0 25px rgba(255,0,255,0.4);
             z-index: 10;
+        }
+        #gameOver h2 {
+            color: #ff00ff;
+            text-shadow: 0 0 12px #ff00ff;
+            margin: 0 0 8px 0;
+            font-size: 1.6em;
+        }
+        #gameOver p {
+            margin: 8px 0 18px;
+            color: #cccccc;
+            font-size: 1.1em;
+        }
+        #gameOver button {
+            background: #1a001a;
+            color: #ffffff;
+            border: 2px solid #ff00ff;
+            border-radius: 12px;
+            padding: 10px 26px;
+            font-size: 17px;
+            cursor: pointer;
+            box-shadow: 0 0 12px rgba(255,0,255,0.35);
+            transition: all 0.1s ease;
+        }
+        #gameOver button:active {
+            transform: scale(0.96);
+            background: #330033;
+            box-shadow: 0 0 18px #ff00ff;
         }
         #debug {
             font-size: 11px;
@@ -97,7 +126,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">glow v5 - pulsing enabled</div>
+    <div id="debug">v6 - game over polish</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
