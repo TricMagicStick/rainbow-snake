@@ -56,6 +56,7 @@
             border-radius: 10px;
             text-align: center;
             display: none;
+            z-index: 10;
         }
     </style>
 </head>
@@ -96,6 +97,12 @@
         let gameInterval;
         let gameSpeed = 120;
         let gameRunning = false;
+        let nextFoodColor = 0;
+
+        const rainbowColors = [
+            '#ff0000', '#ff7f00', '#ffff00', '#00ff00', 
+            '#00ffff', '#0000ff', '#8b00ff'
+        ];
 
         document.getElementById('highScore').textContent = highScore;
 
@@ -106,6 +113,7 @@
                     y: Math.floor(Math.random() * tileCount)
                 };
             } while (snake.some(segment => segment.x === food.x && segment.y === food.y));
+            nextFoodColor = Math.floor(Math.random() * rainbowColors.length);
         }
 
         function draw() {
@@ -113,18 +121,101 @@
             ctx.fillStyle = '#111';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Draw snake
+            // Draw snake with solid colors per segment
             snake.forEach((segment, index) => {
-                const hue = (Date.now() / 8 + index * 25) % 360;
-                ctx.fillStyle = `hsl(${hue}, 100%, 65%)`;
-                ctx.fillRect(segment.x * gridSize + 1, segment.y * gridSize + 1, gridSize - 2, gridSize - 2);
+                const colorIndex = index % rainbowColors.length;
+                ctx.fillStyle = rainbowColors[colorIndex];
+                ctx.fillRect(segment.x * gridSize + 2, segment.y * gridSize + 2, gridSize - 4, gridSize - 4);
+
+                // Draw cute face on head (index 0)
+                if (index === 0) {
+                    drawSnakeHead(segment);
+                }
             });
 
-            // Draw food
-            ctx.fillStyle = '#ff0';
+            // Draw food matching next segment color
+            ctx.fillStyle = rainbowColors[nextFoodColor];
             ctx.beginPath();
-            ctx.arc(food.x * gridSize + gridSize/2, food.y * gridSize + gridSize/2, gridSize/2 - 2, 0, Math.PI * 2);
+            ctx.arc(food.x * gridSize + gridSize/2, food.y * gridSize + gridSize/2, gridSize/2 - 3, 0, Math.PI * 2);
             ctx.fill();
+        }
+
+        function drawSnakeHead(head) {
+            const x = head.x * gridSize;
+            const y = head.y * gridSize;
+            const size = gridSize;
+
+            // Eyes
+            ctx.fillStyle = 'white';
+            ctx.beginPath();
+            if (dx === 1) { // right
+                ctx.arc(x + size * 0.65, y + size * 0.35, size * 0.12, 0, Math.PI * 2);
+                ctx.arc(x + size * 0.65, y + size * 0.65, size * 0.12, 0, Math.PI * 2);
+            } else if (dx === -1) { // left
+                ctx.arc(x + size * 0.35, y + size * 0.35, size * 0.12, 0, Math.PI * 2);
+                ctx.arc(x + size * 0.35, y + size * 0.65, size * 0.12, 0, Math.PI * 2);
+            } else if (dy === -1) { // up
+                ctx.arc(x + size * 0.35, y + size * 0.35, size * 0.12, 0, Math.PI * 2);
+                ctx.arc(x + size * 0.65, y + size * 0.35, size * 0.12, 0, Math.PI * 2);
+            } else { // down
+                ctx.arc(x + size * 0.35, y + size * 0.65, size * 0.12, 0, Math.PI * 2);
+                ctx.arc(x + size * 0.65, y + size * 0.65, size * 0.12, 0, Math.PI * 2);
+            }
+            ctx.fill();
+
+            // Pupils
+            ctx.fillStyle = 'black';
+            ctx.beginPath();
+            if (dx === 1) {
+                ctx.arc(x + size * 0.68, y + size * 0.35, size * 0.05, 0, Math.PI * 2);
+                ctx.arc(x + size * 0.68, y + size * 0.65, size * 0.05, 0, Math.PI * 2);
+            } else if (dx === -1) {
+                ctx.arc(x + size * 0.32, y + size * 0.35, size * 0.05, 0, Math.PI * 2);
+                ctx.arc(x + size * 0.32, y + size * 0.65, size * 0.05, 0, Math.PI * 2);
+            } else if (dy === -1) {
+                ctx.arc(x + size * 0.35, y + size * 0.32, size * 0.05, 0, Math.PI * 2);
+                ctx.arc(x + size * 0.65, y + size * 0.32, size * 0.05, 0, Math.PI * 2);
+            } else {
+                ctx.arc(x + size * 0.35, y + size * 0.68, size * 0.05, 0, Math.PI * 2);
+                ctx.arc(x + size * 0.65, y + size * 0.68, size * 0.05, 0, Math.PI * 2);
+            }
+            ctx.fill();
+
+            // Forked tongue (flicking animation)
+            const tongueLength = Math.sin(Date.now() / 100) * 3 + 8;
+            ctx.strokeStyle = '#ff4444';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            if (dx === 1) {
+                ctx.moveTo(x + size * 0.85, y + size * 0.5);
+                ctx.lineTo(x + size + tongueLength, y + size * 0.5);
+                ctx.moveTo(x + size + tongueLength * 0.7, y + size * 0.5 - 3);
+                ctx.lineTo(x + size + tongueLength, y + size * 0.5);
+                ctx.moveTo(x + size + tongueLength * 0.7, y + size * 0.5 + 3);
+                ctx.lineTo(x + size + tongueLength, y + size * 0.5);
+            } else if (dx === -1) {
+                ctx.moveTo(x + size * 0.15, y + size * 0.5);
+                ctx.lineTo(x - tongueLength, y + size * 0.5);
+                ctx.moveTo(x - tongueLength * 0.7, y + size * 0.5 - 3);
+                ctx.lineTo(x - tongueLength, y + size * 0.5);
+                ctx.moveTo(x - tongueLength * 0.7, y + size * 0.5 + 3);
+                ctx.lineTo(x - tongueLength, y + size * 0.5);
+            } else if (dy === -1) {
+                ctx.moveTo(x + size * 0.5, y + size * 0.15);
+                ctx.lineTo(x + size * 0.5, y - tongueLength);
+                ctx.moveTo(x + size * 0.5 - 3, y - tongueLength * 0.7);
+                ctx.lineTo(x + size * 0.5, y - tongueLength);
+                ctx.moveTo(x + size * 0.5 + 3, y - tongueLength * 0.7);
+                ctx.lineTo(x + size * 0.5, y - tongueLength);
+            } else {
+                ctx.moveTo(x + size * 0.5, y + size * 0.85);
+                ctx.lineTo(x + size * 0.5, y + size + tongueLength);
+                ctx.moveTo(x + size * 0.5 - 3, y + size + tongueLength * 0.7);
+                ctx.lineTo(x + size * 0.5, y + size + tongueLength);
+                ctx.moveTo(x + size * 0.5 + 3, y + size + tongueLength * 0.7);
+                ctx.lineTo(x + size * 0.5, y + size + tongueLength);
+            }
+            ctx.stroke();
         }
 
         function update() {
@@ -155,8 +246,9 @@
                     localStorage.setItem('highScore', highScore);
                     document.getElementById('highScore').textContent = highScore;
                 }
+                // Add new segment with the food's color (already cycled by position)
                 randomFood();
-                if (gameSpeed > 60) gameSpeed -= 3;
+                if (gameSpeed > 60) gameSpeed -= 2;
                 clearInterval(gameInterval);
                 gameInterval = setInterval(gameLoop, gameSpeed);
             } else {
@@ -179,7 +271,7 @@
         function startGame() {
             if (gameInterval) clearInterval(gameInterval);
             gameRunning = true;
-            dx = 1; // Start moving right
+            dx = 1;
             dy = 0;
             gameInterval = setInterval(gameLoop, gameSpeed);
         }
@@ -243,9 +335,8 @@
 
         // Initial setup
         randomFood();
-        draw(); // Draw initial state
+        draw();
 
-        // Auto start after a short delay or on first move
         setTimeout(() => {
             if (dx === 0 && dy === 0) {
                 startGame();
