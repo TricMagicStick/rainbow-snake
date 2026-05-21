@@ -28,9 +28,15 @@
             image-rendering: pixelated;
         }
         .controls {
-            margin-top: 10px;
+            margin-top: 15px;
             display: flex;
-            gap: 10px;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        .dpad-row {
+            display: flex;
+            gap: 8px;
         }
         button {
             padding: 12px 24px;
@@ -71,15 +77,16 @@
             <button onclick="restartGame()">Play Again</button>
         </div>
     </div>
+
     <div class="controls">
         <button onclick="changeDirection(0)">↑</button>
+        <div class="dpad-row">
+            <button onclick="changeDirection(3)">←</button>
+            <button onclick="changeDirection(1)">↓</button>
+            <button onclick="changeDirection(2)">→</button>
+        </div>
+        <button onclick="restartGame()" style="margin-top: 10px;">Restart Game</button>
     </div>
-    <div class="controls">
-        <button onclick="changeDirection(3)">←</button>
-        <button onclick="changeDirection(1)">↓</button>
-        <button onclick="changeDirection(2)">→</button>
-    </div>
-    <button onclick="restartGame()">Restart Game</button>
     <p>Tap arrow buttons or swipe on the game area to move</p>
 
     <script>
@@ -95,7 +102,7 @@
         let score = 0;
         let highScore = parseInt(localStorage.getItem('highScore')) || 0;
         let gameInterval;
-        let gameSpeed = 180;  // Slower starting speed
+        let gameSpeed = 180;
         let gameRunning = false;
         let nextFoodColor = 0;
 
@@ -114,27 +121,23 @@
                     y: Math.floor(Math.random() * tileCount)
                 };
             } while (snake.some(segment => segment.x === food.x && segment.y === food.y));
-            nextFoodColor = (snake.length) % rainbowColors.length;  // Matches next segment
+            nextFoodColor = snake.length % rainbowColors.length;
         }
 
         function draw() {
-            // Clear
             ctx.fillStyle = '#111';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Draw snake with solid colors per segment
             snake.forEach((segment, index) => {
                 const colorIndex = index % rainbowColors.length;
                 ctx.fillStyle = rainbowColors[colorIndex];
                 ctx.fillRect(segment.x * gridSize + 2, segment.y * gridSize + 2, gridSize - 4, gridSize - 4);
 
-                // Draw cute face on head (index 0)
                 if (index === 0) {
                     drawSnakeHead(segment);
                 }
             });
 
-            // Draw food matching next segment color
             ctx.fillStyle = rainbowColors[nextFoodColor];
             ctx.beginPath();
             ctx.arc(food.x * gridSize + gridSize/2, food.y * gridSize + gridSize/2, gridSize/2 - 3, 0, Math.PI * 2);
@@ -146,58 +149,58 @@
             const y = head.y * gridSize;
             const size = gridSize;
 
-            // Eyes - solid black (no whites)
+            // Eyes - solid black, spaced further apart
             ctx.fillStyle = 'black';
             ctx.beginPath();
+            let eyeOffset = size * 0.22; // Increased spacing
             if (dx === 1) { // right
-                ctx.arc(x + size * 0.65, y + size * 0.4, size * 0.1, 0, Math.PI * 2);
-                ctx.arc(x + size * 0.65, y + size * 0.6, size * 0.1, 0, Math.PI * 2);
+                ctx.arc(x + size * 0.68, y + size * 0.38, size * 0.09, 0, Math.PI * 2);
+                ctx.arc(x + size * 0.68, y + size * 0.62, size * 0.09, 0, Math.PI * 2);
             } else if (dx === -1) { // left
-                ctx.arc(x + size * 0.35, y + size * 0.4, size * 0.1, 0, Math.PI * 2);
-                ctx.arc(x + size * 0.35, y + size * 0.6, size * 0.1, 0, Math.PI * 2);
+                ctx.arc(x + size * 0.32, y + size * 0.38, size * 0.09, 0, Math.PI * 2);
+                ctx.arc(x + size * 0.32, y + size * 0.62, size * 0.09, 0, Math.PI * 2);
             } else if (dy === -1) { // up
-                ctx.arc(x + size * 0.4, y + size * 0.35, size * 0.1, 0, Math.PI * 2);
-                ctx.arc(x + size * 0.6, y + size * 0.35, size * 0.1, 0, Math.PI * 2);
+                ctx.arc(x + size * 0.38, y + size * 0.32, size * 0.09, 0, Math.PI * 2);
+                ctx.arc(x + size * 0.62, y + size * 0.32, size * 0.09, 0, Math.PI * 2);
             } else { // down
-                ctx.arc(x + size * 0.4, y + size * 0.65, size * 0.1, 0, Math.PI * 2);
-                ctx.arc(x + size * 0.6, y + size * 0.65, size * 0.1, 0, Math.PI * 2);
+                ctx.arc(x + size * 0.38, y + size * 0.68, size * 0.09, 0, Math.PI * 2);
+                ctx.arc(x + size * 0.62, y + size * 0.68, size * 0.09, 0, Math.PI * 2);
             }
             ctx.fill();
 
-            // Forked tongue - more pronounced Y shape
-            const tongueLength = Math.sin(Date.now() / 80) * 4 + 10;
+            // Forked tongue - smaller, clearer Y shape
+            const tongueLength = Math.sin(Date.now() / 100) * 3 + 8;
             ctx.strokeStyle = '#ff2222';
-            ctx.lineWidth = 3.5;
+            ctx.lineWidth = 2.5;
             ctx.lineCap = 'round';
             ctx.beginPath();
             if (dx === 1) {
-                ctx.moveTo(x + size * 0.9, y + size * 0.5);
+                ctx.moveTo(x + size * 0.85, y + size * 0.5);
                 ctx.lineTo(x + size + tongueLength, y + size * 0.5);
-                // Y fork
-                ctx.moveTo(x + size + tongueLength * 0.6, y + size * 0.5 - 4);
+                ctx.moveTo(x + size + tongueLength * 0.65, y + size * 0.5 - 3);
                 ctx.lineTo(x + size + tongueLength, y + size * 0.5);
-                ctx.moveTo(x + size + tongueLength * 0.6, y + size * 0.5 + 4);
+                ctx.moveTo(x + size + tongueLength * 0.65, y + size * 0.5 + 3);
                 ctx.lineTo(x + size + tongueLength, y + size * 0.5);
             } else if (dx === -1) {
-                ctx.moveTo(x + size * 0.1, y + size * 0.5);
+                ctx.moveTo(x + size * 0.15, y + size * 0.5);
                 ctx.lineTo(x - tongueLength, y + size * 0.5);
-                ctx.moveTo(x - tongueLength * 0.6, y + size * 0.5 - 4);
+                ctx.moveTo(x - tongueLength * 0.65, y + size * 0.5 - 3);
                 ctx.lineTo(x - tongueLength, y + size * 0.5);
-                ctx.moveTo(x - tongueLength * 0.6, y + size * 0.5 + 4);
+                ctx.moveTo(x - tongueLength * 0.65, y + size * 0.5 + 3);
                 ctx.lineTo(x - tongueLength, y + size * 0.5);
             } else if (dy === -1) {
-                ctx.moveTo(x + size * 0.5, y + size * 0.1);
+                ctx.moveTo(x + size * 0.5, y + size * 0.15);
                 ctx.lineTo(x + size * 0.5, y - tongueLength);
-                ctx.moveTo(x + size * 0.5 - 4, y - tongueLength * 0.6);
+                ctx.moveTo(x + size * 0.5 - 3, y - tongueLength * 0.65);
                 ctx.lineTo(x + size * 0.5, y - tongueLength);
-                ctx.moveTo(x + size * 0.5 + 4, y - tongueLength * 0.6);
+                ctx.moveTo(x + size * 0.5 + 3, y - tongueLength * 0.65);
                 ctx.lineTo(x + size * 0.5, y - tongueLength);
             } else {
-                ctx.moveTo(x + size * 0.5, y + size * 0.9);
+                ctx.moveTo(x + size * 0.5, y + size * 0.85);
                 ctx.lineTo(x + size * 0.5, y + size + tongueLength);
-                ctx.moveTo(x + size * 0.5 - 4, y + size + tongueLength * 0.6);
+                ctx.moveTo(x + size * 0.5 - 3, y + size + tongueLength * 0.65);
                 ctx.lineTo(x + size * 0.5, y + size + tongueLength);
-                ctx.moveTo(x + size * 0.5 + 4, y + size + tongueLength * 0.6);
+                ctx.moveTo(x + size * 0.5 + 3, y + size + tongueLength * 0.65);
                 ctx.lineTo(x + size * 0.5, y + size + tongueLength);
             }
             ctx.stroke();
@@ -208,13 +211,11 @@
 
             const head = {x: snake[0].x + dx, y: snake[0].y + dy};
 
-            // Wall collision
             if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) {
                 endGame();
                 return;
             }
 
-            // Self collision
             if (snake.some(segment => segment.x === head.x && segment.y === head.y)) {
                 endGame();
                 return;
@@ -222,7 +223,6 @@
 
             snake.unshift(head);
 
-            // Eat food
             if (head.x === food.x && head.y === food.y) {
                 score++;
                 document.getElementById('score').textContent = score;
@@ -232,7 +232,7 @@
                     document.getElementById('highScore').textContent = highScore;
                 }
                 randomFood();
-                if (gameSpeed > 70) gameSpeed -= 3;  // Gradual speed increase
+                if (gameSpeed > 70) gameSpeed -= 3;
                 clearInterval(gameInterval);
                 gameInterval = setInterval(gameLoop, gameSpeed);
             } else {
@@ -274,7 +274,6 @@
         function changeDirection(dir) {
             if (!gameRunning) return;
 
-            // Prevent reversing
             if (dir === 0 && dy === 1) return;
             if (dir === 1 && dy === -1) return;
             if (dir === 2 && dx === -1) return;
@@ -286,7 +285,6 @@
             else if (dir === 3) { dx = -1; dy = 0; }
         }
 
-        // Keyboard
         document.addEventListener('keydown', e => {
             if (!gameRunning) return;
             switch(e.key) {
@@ -297,7 +295,6 @@
             }
         });
 
-        // Touch swipe
         let touchStartX, touchStartY;
         canvas.addEventListener('touchstart', e => {
             touchStartX = e.changedTouches[0].screenX;
@@ -317,7 +314,6 @@
             }
         });
 
-        // Initial setup
         randomFood();
         draw();
 
