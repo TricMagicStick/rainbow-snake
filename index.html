@@ -153,7 +153,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v8 - restart side position + centered play again</div>
+    <div id="debug">v9 - syntax cleanup for reliability</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -209,7 +209,7 @@
             for (let i = 0; i < 80; i++) {
                 stars.push({
                     x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height;
+                    y: Math.random() * canvas.height,
                     size: Math.random() * 2 + 0.5
                 });
             }
