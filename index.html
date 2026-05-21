@@ -108,7 +108,7 @@
         let score = 0;
         let highScore = localStorage.getItem('highScore') || 0;
         let gameInterval;
-        let speed = 160;
+        let speed = 180;
         let gameOverFlag = false;
 
         document.getElementById('score').innerText = `Score: ${score} | High Score: ${highScore}`;
@@ -124,78 +124,85 @@
             ctx.fillStyle = '#000';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Body
+            // Body segments (solid rainbow)
+            const colors = ['#00ff00', '#00ffff', '#0088ff', '#4400ff', '#aa00ff', '#ff00ff', '#ff0088', '#ff4400', '#ffaa00', '#ffff00'];
             for (let i = 1; i < snake.length; i++) {
-                const colors = ['#00ff00', '#00ffff', '#0088ff', '#4400ff', '#aa00ff', '#ff00ff', '#ff0088', '#ff4400', '#ffaa00', '#ffff00'];
                 ctx.fillStyle = colors[(i-1) % colors.length];
                 ctx.fillRect(snake[i].x * grid, snake[i].y * grid, grid, grid);
             }
 
-            // Head
+            // Head - green
             const head = snake[0];
             ctx.fillStyle = '#00ff00';
             ctx.fillRect(head.x * grid, head.y * grid, grid, grid);
 
-            // Eyes
+            // Eyes - bigger, solid black, centered properly
             ctx.fillStyle = '#000';
-            const eyeSize = 5;
-            if (dx === 1) {
-                ctx.fillRect(head.x*grid + 12, head.y*grid + 5, eyeSize, eyeSize);
-                ctx.fillRect(head.x*grid + 12, head.y*grid + 13, eyeSize, eyeSize);
-            } else if (dx === -1) {
-                ctx.fillRect(head.x*grid + 3, head.y*grid + 5, eyeSize, eyeSize);
-                ctx.fillRect(head.x*grid + 3, head.y*grid + 13, eyeSize, eyeSize);
-            } else if (dy === -1) {
-                ctx.fillRect(head.x*grid + 5, head.y*grid + 3, eyeSize, eyeSize);
-                ctx.fillRect(head.x*grid + 13, head.y*grid + 3, eyeSize, eyeSize);
-            } else {
-                ctx.fillRect(head.x*grid + 5, head.y*grid + 12, eyeSize, eyeSize);
-                ctx.fillRect(head.x*grid + 13, head.y*grid + 12, eyeSize, eyeSize);
+            const eyeSize = 6;
+            const eyeOffset = 5;
+            if (dx === 1) { // right
+                ctx.fillRect(head.x*grid + 13, head.y*grid + eyeOffset, eyeSize, eyeSize);
+                ctx.fillRect(head.x*grid + 13, head.y*grid + grid - eyeOffset - eyeSize, eyeSize, eyeSize);
+            } else if (dx === -1) { // left
+                ctx.fillRect(head.x*grid + 2, head.y*grid + eyeOffset, eyeSize, eyeSize);
+                ctx.fillRect(head.x*grid + 2, head.y*grid + grid - eyeOffset - eyeSize, eyeSize, eyeSize);
+            } else if (dy === -1) { // up
+                ctx.fillRect(head.x*grid + eyeOffset, head.y*grid + 2, eyeSize, eyeSize);
+                ctx.fillRect(head.x*grid + grid - eyeOffset - eyeSize, head.y*grid + 2, eyeSize, eyeSize);
+            } else { // down
+                ctx.fillRect(head.x*grid + eyeOffset, head.y*grid + 13, eyeSize, eyeSize);
+                ctx.fillRect(head.x*grid + grid - eyeOffset - eyeSize, head.y*grid + 13, eyeSize, eyeSize);
             }
 
-            // Clean Y tongue starting outside
+            // Overhauled Y-forked tongue - clean lines starting OUTSIDE head
             ctx.strokeStyle = '#ff0000';
-            ctx.lineWidth = 2.5;
+            ctx.lineWidth = 2.8;
             ctx.lineCap = 'round';
-            const hx = head.x * grid + grid/2;
-            const hy = head.y * grid + grid/2;
+            ctx.lineJoin = 'round';
+
+            const hx = head.x * grid + grid / 2;
+            const hy = head.y * grid + grid / 2;
+            const tongueLength = 14;
+            const forkAngle = 35; // degrees for wider Y
 
             ctx.beginPath();
-            if (dx === 1) {
+            if (dx === 1) { // right
                 ctx.moveTo(hx + 10, hy);
-                ctx.lineTo(hx + 20, hy);
-                ctx.moveTo(hx + 15, hy - 5);
-                ctx.lineTo(hx + 20, hy);
-                ctx.moveTo(hx + 15, hy + 5);
-                ctx.lineTo(hx + 20, hy);
-            } else if (dx === -1) {
+                ctx.lineTo(hx + tongueLength, hy);
+                // Upper fork
+                ctx.moveTo(hx + 10, hy);
+                ctx.lineTo(hx + tongueLength - 3, hy - forkAngle);
+                // Lower fork
+                ctx.moveTo(hx + 10, hy);
+                ctx.lineTo(hx + tongueLength - 3, hy + forkAngle);
+            } else if (dx === -1) { // left
                 ctx.moveTo(hx - 10, hy);
-                ctx.lineTo(hx - 20, hy);
-                ctx.moveTo(hx - 15, hy - 5);
-                ctx.lineTo(hx - 20, hy);
-                ctx.moveTo(hx - 15, hy + 5);
-                ctx.lineTo(hx - 20, hy);
-            } else if (dy === -1) {
+                ctx.lineTo(hx - tongueLength, hy);
+                ctx.moveTo(hx - 10, hy);
+                ctx.lineTo(hx - tongueLength + 3, hy - forkAngle);
+                ctx.moveTo(hx - 10, hy);
+                ctx.lineTo(hx - tongueLength + 3, hy + forkAngle);
+            } else if (dy === -1) { // up
                 ctx.moveTo(hx, hy - 10);
-                ctx.lineTo(hx, hy - 20);
-                ctx.moveTo(hx - 5, hy - 15);
-                ctx.lineTo(hx, hy - 20);
-                ctx.moveTo(hx + 5, hy - 15);
-                ctx.lineTo(hx, hy - 20);
-            } else {
+                ctx.lineTo(hx, hy - tongueLength);
+                ctx.moveTo(hx, hy - 10);
+                ctx.lineTo(hx - forkAngle, hy - tongueLength + 3);
+                ctx.moveTo(hx, hy - 10);
+                ctx.lineTo(hx + forkAngle, hy - tongueLength + 3);
+            } else { // down
                 ctx.moveTo(hx, hy + 10);
-                ctx.lineTo(hx, hy + 20);
-                ctx.moveTo(hx - 5, hy + 15);
-                ctx.lineTo(hx, hy + 20);
-                ctx.moveTo(hx + 5, hy + 15);
-                ctx.lineTo(hx, hy + 20);
+                ctx.lineTo(hx, hy + tongueLength);
+                ctx.moveTo(hx, hy + 10);
+                ctx.lineTo(hx - forkAngle, hy + tongueLength - 3);
+                ctx.moveTo(hx, hy + 10);
+                ctx.lineTo(hx + forkAngle, hy + tongueLength - 3);
             }
             ctx.stroke();
 
-            // Food
-            ctx.fillStyle = '#ffff00';
+            // Food (matches next segment color - simple for now)
+            ctx.fillStyle = colors[snake.length % colors.length];
             ctx.beginPath();
-            ctx.arc(food.x * grid + grid/2, food.y * grid + grid/2, grid/2 - 2, 0, Math.PI * 2);
+            ctx.arc(food.x * grid + grid/2, food.y * grid + grid/2, grid/2 - 3, 0, Math.PI * 2);
             ctx.fill();
         }
 
@@ -222,7 +229,7 @@
                 score++;
                 document.getElementById('score').innerText = `Score: ${score} | High Score: ${highScore}`;
                 randomFood();
-                if (speed > 80) speed -= 3;
+                if (speed > 90) speed -= 4;
             } else {
                 snake.pop();
             }
@@ -245,7 +252,7 @@
             snake = [{x: 10, y: 10}];
             dx = 1; dy = 0;
             score = 0;
-            speed = 160;
+            speed = 180;
             gameOverFlag = false;
             document.getElementById('score').innerText = `Score: ${score} | High Score: ${highScore}`;
             document.getElementById('gameOver').style.display = 'none';
