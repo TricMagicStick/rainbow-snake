@@ -97,7 +97,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">glow v4 - pulsing enabled</div>
+    <div id="debug">glow v5 - pulsing enabled</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -253,14 +253,14 @@
             }
             ctx.stroke();
 
-            // Much stronger pulsing glow on food (for visibility)
-            const pulse = Math.sin(Date.now() / 340) * 7 + 13;
+            // Smaller food with stronger pulsing glow
+            const pulse = Math.sin(Date.now() / 300) * 9.5 + 16;
             ctx.save();
             ctx.shadowColor = food.color || rainbowColors[snake.length % rainbowColors.length];
             ctx.shadowBlur = pulse;
             ctx.fillStyle = food.color || rainbowColors[snake.length % rainbowColors.length];
             ctx.beginPath();
-            ctx.arc(food.x * grid + grid/2, food.y * grid + grid/2, 8, 0, Math.PI * 2);
+            ctx.arc(food.x * grid + grid/2, food.y * grid + grid/2, 6.5, 0, Math.PI * 2);
             ctx.fill();
             ctx.restore();
         }
