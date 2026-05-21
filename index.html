@@ -160,9 +160,9 @@
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             drawStars();
 
-            // Body segments
+            // Body segments - start from next color after head green
             for (let i = 1; i < snake.length; i++) {
-                ctx.fillStyle = rainbowColors[(i-1) % rainbowColors.length];
+                ctx.fillStyle = rainbowColors[ i % rainbowColors.length ];
                 ctx.fillRect(snake[i].x * grid + 1, snake[i].y * grid + 1, grid - 2, grid - 2);
             }
 
@@ -188,60 +188,55 @@
                 ctx.fillRect(head.x*grid + 13, head.y*grid + 12, eyeSize, eyeSize);
             }
 
-            // PROPER Y-FORKED TONGUE - Deep overhaul for clear Y shape
+            // Smaller, cuter Y-forked tongue
             ctx.strokeStyle = '#ff2222';
-            ctx.lineWidth = 2.5;
+            ctx.lineWidth = 2;
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
-            tongueFrame += 0.35;
-            const flick = Math.sin(tongueFrame) * 1.2;
+            tongueFrame += 0.3;
+            const flick = Math.sin(tongueFrame) * 0.9;
             const hx = head.x * grid;
             const hy = head.y * grid;
-            const stemLen = 6;   // short stem coming out of mouth
-            const forkLen = 8;   // length of each fork arm
+            const stemLen = 4;
+            const forkLen = 5;
+            const spread = 3;
 
             ctx.beginPath();
-            if (dx === 1) { // right - Y on its side
-                // Stem
+            if (dx === 1) { // right
                 ctx.moveTo(hx + grid - 2, hy + grid/2);
-                ctx.lineTo(hx + grid + stemLen, hy + grid/2 + flick * 0.5);
-                // Upper fork
-                ctx.moveTo(hx + grid + stemLen, hy + grid/2 + flick * 0.5);
-                ctx.lineTo(hx + grid + stemLen + forkLen, hy + grid/2 + flick * 0.5 - 5);
-                // Lower fork
-                ctx.moveTo(hx + grid + stemLen, hy + grid/2 + flick * 0.5);
-                ctx.lineTo(hx + grid + stemLen + forkLen, hy + grid/2 + flick * 0.5 + 5);
+                ctx.lineTo(hx + grid + stemLen, hy + grid/2 + flick * 0.4);
+                ctx.moveTo(hx + grid + stemLen, hy + grid/2 + flick * 0.4);
+                ctx.lineTo(hx + grid + stemLen + forkLen, hy + grid/2 + flick * 0.4 - spread);
+                ctx.moveTo(hx + grid + stemLen, hy + grid/2 + flick * 0.4);
+                ctx.lineTo(hx + grid + stemLen + forkLen, hy + grid/2 + flick * 0.4 + spread);
             } else if (dx === -1) { // left
                 ctx.moveTo(hx + 2, hy + grid/2);
-                ctx.lineTo(hx - stemLen, hy + grid/2 + flick * 0.5);
-                ctx.moveTo(hx - stemLen, hy + grid/2 + flick * 0.5);
-                ctx.lineTo(hx - stemLen - forkLen, hy + grid/2 + flick * 0.5 - 5);
-                ctx.moveTo(hx - stemLen, hy + grid/2 + flick * 0.5);
-                ctx.lineTo(hx - stemLen - forkLen, hy + grid/2 + flick * 0.5 + 5);
-            } else if (dy === -1) { // up - classic Y
-                // Stem coming out the top of the head
+                ctx.lineTo(hx - stemLen, hy + grid/2 + flick * 0.4);
+                ctx.moveTo(hx - stemLen, hy + grid/2 + flick * 0.4);
+                ctx.lineTo(hx - stemLen - forkLen, hy + grid/2 + flick * 0.4 - spread);
+                ctx.moveTo(hx - stemLen, hy + grid/2 + flick * 0.4);
+                ctx.lineTo(hx - stemLen - forkLen, hy + grid/2 + flick * 0.4 + spread);
+            } else if (dy === -1) { // up
                 ctx.moveTo(hx + grid/2, hy + 2);
                 ctx.lineTo(hx + grid/2 + flick * 0.3, hy - stemLen);
-                // Left fork
                 ctx.moveTo(hx + grid/2 + flick * 0.3, hy - stemLen);
-                ctx.lineTo(hx + grid/2 + flick * 0.3 - 5, hy - stemLen - forkLen);
-                // Right fork
+                ctx.lineTo(hx + grid/2 + flick * 0.3 - spread, hy - stemLen - forkLen);
                 ctx.moveTo(hx + grid/2 + flick * 0.3, hy - stemLen);
-                ctx.lineTo(hx + grid/2 + flick * 0.3 + 5, hy - stemLen - forkLen);
+                ctx.lineTo(hx + grid/2 + flick * 0.3 + spread, hy - stemLen - forkLen);
             } else { // down
                 ctx.moveTo(hx + grid/2, hy + grid - 2);
                 ctx.lineTo(hx + grid/2 + flick * 0.3, hy + grid + stemLen);
                 ctx.moveTo(hx + grid/2 + flick * 0.3, hy + grid + stemLen);
-                ctx.lineTo(hx + grid/2 + flick * 0.3 - 5, hy + grid + stemLen + forkLen);
+                ctx.lineTo(hx + grid/2 + flick * 0.3 - spread, hy + grid + stemLen + forkLen);
                 ctx.moveTo(hx + grid/2 + flick * 0.3, hy + grid + stemLen);
-                ctx.lineTo(hx + grid/2 + flick * 0.3 + 5, hy + grid + stemLen + forkLen);
+                ctx.lineTo(hx + grid/2 + flick * 0.3 + spread, hy + grid + stemLen + forkLen);
             }
             ctx.stroke();
 
-            // Food
+            // Food color matches the next segment color in the rainbow cycle
             ctx.fillStyle = food.color || rainbowColors[snake.length % rainbowColors.length];
             ctx.beginPath();
-            ctx.arc(food.x * grid + grid/2, food.y * grid + grid/2, 8, 0, Math.PI * 2);
+            ctx.arc(food.x * grid + grid/2, food.y * grid + grid/2, 7, 0, Math.PI * 2);
             ctx.fill();
         }
 
