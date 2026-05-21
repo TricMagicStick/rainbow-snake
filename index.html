@@ -245,10 +245,11 @@
             }
             ctx.stroke();
 
-            // Food with subtle soft glow for polish
+            // Food with subtle pulsing soft glow
+            const pulse = Math.sin(Date.now() / 380) * 3 + 8.5;
             ctx.save();
             ctx.shadowColor = food.color || rainbowColors[snake.length % rainbowColors.length];
-            ctx.shadowBlur = 6;
+            ctx.shadowBlur = pulse;
             ctx.fillStyle = food.color || rainbowColors[snake.length % rainbowColors.length];
             ctx.beginPath();
             ctx.arc(food.x * grid + grid/2, food.y * grid + grid/2, 7, 0, Math.PI * 2);
