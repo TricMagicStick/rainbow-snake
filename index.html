@@ -158,7 +158,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v10.2 - stronger tongue flick + head poof on eat</div>
+    <div id="debug">v10.3 - ring restored + head poof + stronger tongue</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -328,20 +328,31 @@
             }
             ctx.stroke();
 
-            // Subtle poof/sparkle near head/mouth on eat (fades quickly)
+            // Subtle poof near head/mouth on eat + faint ring around food (both effects)
             if (eatEffect > 0) {
+                // Head poof (near mouth)
                 ctx.save();
                 ctx.fillStyle = 'rgba(255,255,255,0.75)';
                 const poofX = head.x * grid + grid/2;
                 const poofY = head.y * grid + grid/2;
-                const offset = (10 - eatEffect) * 0.8;
-                // small dots around the mouth area
+                const offset = (12 - eatEffect) * 0.7;
                 ctx.fillRect(poofX - 2 - offset*0.3, poofY - 3, 2, 2);
                 ctx.fillRect(poofX + 3 + offset*0.2, poofY - 2, 2, 2);
                 ctx.fillRect(poofX - 1, poofY + 4 + offset*0.4, 2, 2);
                 ctx.fillStyle = 'rgba(255,200,255,0.6)';
                 ctx.fillRect(poofX + 1 - offset*0.1, poofY - 5 - offset*0.2, 2.5, 2.5);
                 ctx.restore();
+
+                // Faint pulsing ring around current food (secondary effect)
+                ctx.save();
+                ctx.strokeStyle = 'rgba(255,255,255,0.55)';
+                ctx.lineWidth = 2;
+                const ringRadius = 7 + (12 - eatEffect) * 1.2;
+                ctx.beginPath();
+                ctx.arc(food.x * grid + grid/2, food.y * grid + grid/2, ringRadius, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.restore();
+
                 eatEffect--;
             }
 
@@ -372,7 +383,7 @@
             if (head.x === food.x && head.y === food.y) {
                 score++;
                 document.getElementById('score').innerText = `Score: ${score} | High Score: ${highScore}`;
-                eatEffect = 12; // trigger head poof + keep ring if desired
+                eatEffect = 12;
                 randomFood();
                 if (speed > 90) speed -= 3;
             } else {
