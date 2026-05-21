@@ -158,7 +158,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v11.2 - more drastic snake head (wider + elongated + rounded)</div>
+    <div id="debug">v11.3 - tapered snake head with narrower snout</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -247,62 +247,79 @@
                 ctx.strokeRect(snake[i].x * grid + 1, snake[i].y * grid + 1, grid - 2, grid - 2);
             }
 
-            // Head - more drastic snake-like shape (wider + slightly elongated + rounded)
+            // Head - tapered snake head with narrower snout (simple but more drastic)
             const head = snake[0];
             ctx.fillStyle = '#00ff00';
-            ctx.beginPath();
-            if (dx === 1) { // right
-                ctx.roundRect(head.x * grid - 1, head.y * grid - 1, grid + 4, grid + 2, 7);
-            } else if (dx === -1) { // left
-                ctx.roundRect(head.x * grid - 3, head.y * grid - 1, grid + 4, grid + 2, 7);
-            } else if (dy === -1) { // up
-                ctx.roundRect(head.x * grid - 1, head.y * grid - 3, grid + 2, grid + 4, 7);
-            } else { // down
-                ctx.roundRect(head.x * grid - 1, head.y * grid - 1, grid + 2, grid + 4, 7);
-            }
-            ctx.fill();
             ctx.strokeStyle = 'rgba(255,255,255,0.45)';
             ctx.lineWidth = 1.8;
-            ctx.beginPath();
-            if (dx === 1) {
-                ctx.roundRect(head.x * grid - 1, head.y * grid - 1, grid + 4, grid + 2, 7);
-            } else if (dx === -1) {
-                ctx.roundRect(head.x * grid - 3, head.y * grid - 1, grid + 4, grid + 2, 7);
-            } else if (dy === -1) {
-                ctx.roundRect(head.x * grid - 1, head.y * grid - 3, grid + 2, grid + 4, 7);
-            } else {
-                ctx.roundRect(head.x * grid - 1, head.y * grid - 1, grid + 2, grid + 4, 7);
-            }
-            ctx.stroke();
 
-            // Eyes - adjusted for new head shape
-            ctx.fillStyle = '#111111';
-            const eyeSize = 5;
-            const highlightSize = 1.6;
-            if (dx === 1) { // right
-                ctx.fillRect(head.x*grid + 13, head.y*grid + 5, eyeSize, eyeSize);
-                ctx.fillRect(head.x*grid + 13, head.y*grid + 12, eyeSize, eyeSize);
-                ctx.fillStyle = '#ffffff';
-                ctx.fillRect(head.x*grid + 13.6, head.y*grid + 5.6, highlightSize, highlightSize);
-                ctx.fillRect(head.x*grid + 13.6, head.y*grid + 12.6, highlightSize, highlightSize);
+            if (dx === 1) { // right - wide back, narrow snout
+                ctx.beginPath();
+                ctx.roundRect(head.x * grid - 2, head.y * grid - 1, grid + 2, grid + 2, 6);
+                ctx.fill();
+                ctx.stroke();
+                // narrower snout
+                ctx.beginPath();
+                ctx.roundRect(head.x * grid + grid - 2, head.y * grid + 3, 6, grid - 6, 3);
+                ctx.fill();
+                ctx.stroke();
             } else if (dx === -1) { // left
-                ctx.fillRect(head.x*grid + 2, head.y*grid + 5, eyeSize, eyeSize);
-                ctx.fillRect(head.x*grid + 2, head.y*grid + 12, eyeSize, eyeSize);
-                ctx.fillStyle = '#ffffff';
-                ctx.fillRect(head.x*grid + 2.6, head.y*grid + 5.6, highlightSize, highlightSize);
-                ctx.fillRect(head.x*grid + 2.6, head.y*grid + 12.6, highlightSize, highlightSize);
+                ctx.beginPath();
+                ctx.roundRect(head.x * grid, head.y * grid - 1, grid + 2, grid + 2, 6);
+                ctx.fill();
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.roundRect(head.x * grid - 4, head.y * grid + 3, 6, grid - 6, 3);
+                ctx.fill();
+                ctx.stroke();
             } else if (dy === -1) { // up
-                ctx.fillRect(head.x*grid + 5, head.y*grid + 2, eyeSize, eyeSize);
-                ctx.fillRect(head.x*grid + 12, head.y*grid + 2, eyeSize, eyeSize);
-                ctx.fillStyle = '#ffffff';
-                ctx.fillRect(head.x*grid + 5.6, head.y*grid + 2.6, highlightSize, highlightSize);
-                ctx.fillRect(head.x*grid + 12.6, head.y*grid + 2.6, highlightSize, highlightSize);
+                ctx.beginPath();
+                ctx.roundRect(head.x * grid - 1, head.y * grid, grid + 2, grid + 2, 6);
+                ctx.fill();
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.roundRect(head.x * grid + 3, head.y * grid - 4, grid - 6, 6, 3);
+                ctx.fill();
+                ctx.stroke();
             } else { // down
-                ctx.fillRect(head.x*grid + 5, head.y*grid + 13, eyeSize, eyeSize);
-                ctx.fillRect(head.x*grid + 12, head.y*grid + 13, eyeSize, eyeSize);
+                ctx.beginPath();
+                ctx.roundRect(head.x * grid - 1, head.y * grid - 2, grid + 2, grid + 2, 6);
+                ctx.fill();
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.roundRect(head.x * grid + 3, head.y * grid + grid - 2, grid - 6, 6, 3);
+                ctx.fill();
+                ctx.stroke();
+            }
+
+            // Eyes - adjusted for tapered head
+            ctx.fillStyle = '#111111';
+            const eyeSize = 4.5;
+            const highlightSize = 1.5;
+            if (dx === 1) { // right
+                ctx.fillRect(head.x*grid + 8, head.y*grid + 5, eyeSize, eyeSize);
+                ctx.fillRect(head.x*grid + 8, head.y*grid + 12, eyeSize, eyeSize);
                 ctx.fillStyle = '#ffffff';
-                ctx.fillRect(head.x*grid + 5.6, head.y*grid + 13.6, highlightSize, highlightSize);
-                ctx.fillRect(head.x*grid + 12.6, head.y*grid + 13.6, highlightSize, highlightSize);
+                ctx.fillRect(head.x*grid + 8.7, head.y*grid + 5.6, highlightSize, highlightSize);
+                ctx.fillRect(head.x*grid + 8.7, head.y*grid + 12.6, highlightSize, highlightSize);
+            } else if (dx === -1) { // left
+                ctx.fillRect(head.x*grid + 7, head.y*grid + 5, eyeSize, eyeSize);
+                ctx.fillRect(head.x*grid + 7, head.y*grid + 12, eyeSize, eyeSize);
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(head.x*grid + 7.7, head.y*grid + 5.6, highlightSize, highlightSize);
+                ctx.fillRect(head.x*grid + 7.7, head.y*grid + 12.6, highlightSize, highlightSize);
+            } else if (dy === -1) { // up
+                ctx.fillRect(head.x*grid + 5, head.y*grid + 7, eyeSize, eyeSize);
+                ctx.fillRect(head.x*grid + 12, head.y*grid + 7, eyeSize, eyeSize);
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(head.x*grid + 5.6, head.y*grid + 7.7, highlightSize, highlightSize);
+                ctx.fillRect(head.x*grid + 12.6, head.y*grid + 7.7, highlightSize, highlightSize);
+            } else { // down
+                ctx.fillRect(head.x*grid + 5, head.y*grid + 8, eyeSize, eyeSize);
+                ctx.fillRect(head.x*grid + 12, head.y*grid + 8, eyeSize, eyeSize);
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(head.x*grid + 5.6, head.y*grid + 8.7, highlightSize, highlightSize);
+                ctx.fillRect(head.x*grid + 12.6, head.y*grid + 8.7, highlightSize, highlightSize);
             }
 
             // Smol cute tongue with dramatic bouncy flick
@@ -320,7 +337,7 @@
 
             ctx.beginPath();
             if (dx === 1) { // right
-                ctx.moveTo(hx + grid, hy + grid/2);
+                ctx.moveTo(hx + grid - 1, hy + grid/2);
                 ctx.lineTo(hx + grid + stemLen, hy + grid/2 + flick * 0.48);
                 ctx.moveTo(hx + grid + stemLen, hy + grid/2 + flick * 0.48);
                 ctx.lineTo(hx + grid + stemLen + forkLen, hy + grid/2 + flick * 0.48 - spread);
