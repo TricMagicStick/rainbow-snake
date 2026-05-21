@@ -158,7 +158,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v10.7 - stationary bursting poof + dramatic tongue flick</div>
+    <div id="debug">v10.8 - bigger stationary poof cloud (smaller more numerous particles + quicker gradual fade)</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -330,27 +330,30 @@
             }
             ctx.stroke();
 
-            // Stationary bursting poof (stays on map and dissolves) + faint ring
+            // Bigger stationary poof cloud (smaller + more numerous particles, quicker gradual fade) + faint ring
             if (eatEffect > 0) {
                 ctx.save();
-                const offset = (13 - eatEffect) * 0.8;
+                const t = eatEffect / 14;
 
-                // Bigger burst that stays in place (not following head)
+                // More numerous smaller particles for a bigger cloud feel
                 ctx.fillStyle = '#ffffff';
-                ctx.fillRect(eatPoofX + 7 + offset*0.3, eatPoofY - 3, 3.5, 3.5);
-                ctx.fillRect(eatPoofX + 10 + offset*0.2, eatPoofY + 4, 3, 3);
+                ctx.fillRect(eatPoofX + 5 + (1-t)*4, eatPoofY - 4, 2.2, 2.2);
+                ctx.fillRect(eatPoofX + 9 + (1-t)*3, eatPoofY + 2, 2, 2);
+                ctx.fillRect(eatPoofX + 3 + (1-t)*5, eatPoofY + 6, 2.2, 2.2);
+                ctx.fillRect(eatPoofX + 11 + (1-t)*2, eatPoofY - 1, 1.8, 1.8);
+                ctx.fillRect(eatPoofX + 7 + (1-t)*6, eatPoofY + 8, 2, 2);
                 ctx.fillStyle = '#ffccff';
-                ctx.fillRect(eatPoofX + 4 - offset*0.15, eatPoofY - 6, 4, 4);
-                ctx.fillRect(eatPoofX + 12 + offset*0.4, eatPoofY + 2, 3, 3);
-                ctx.fillStyle = '#ffffff';
-                ctx.fillRect(eatPoofX + 6 + offset*0.1, eatPoofY + 7, 3.2, 3.2);
+                ctx.fillRect(eatPoofX + 4 + (1-t)*3, eatPoofY - 7, 2.5, 2.5);
+                ctx.fillRect(eatPoofX + 10 + (1-t)*4, eatPoofY + 4, 2.2, 2.2);
+                ctx.fillRect(eatPoofX + 6 + (1-t)*5, eatPoofY - 3, 2, 2);
+                ctx.fillRect(eatPoofX + 8 + (1-t)*2, eatPoofY + 9, 1.8, 1.8);
                 ctx.restore();
 
                 // Faint ring around food
                 ctx.save();
-                ctx.strokeStyle = 'rgba(255,255,255,0.6)';
+                ctx.strokeStyle = 'rgba(255,255,255,0.55)';
                 ctx.lineWidth = 2;
-                const ringRadius = 7 + (13 - eatEffect) * 0.95;
+                const ringRadius = 7 + (14 - eatEffect) * 0.9;
                 ctx.beginPath();
                 ctx.arc(food.x * grid + grid/2, food.y * grid + grid/2, ringRadius, 0, Math.PI * 2);
                 ctx.stroke();
@@ -363,7 +366,7 @@
             const pulse = Math.sin(Date.now() / 300) * 9.5 + 16;
             ctx.save();
             ctx.shadowColor = food.color || rainbowColors[snake.length % rainbowColors.length];
-            ctx.shadowBlur = pulse;
+                ctx.shadowBlur = pulse;
             ctx.fillStyle = food.color || rainbowColors[snake.length % rainbowColors.length];
             ctx.beginPath();
             ctx.arc(food.x * grid + grid/2, food.y * grid + grid/2, 6.5, 0, Math.PI * 2);
@@ -388,7 +391,7 @@
                 document.getElementById('score').innerText = `Score: ${score} | High Score: ${highScore}`;
                 eatPoofX = head.x * grid + grid/2;
                 eatPoofY = head.y * grid + grid/2;
-                eatEffect = 16;
+                eatEffect = 14;
                 randomFood();
                 if (speed > 90) speed -= 3;
             } else {
