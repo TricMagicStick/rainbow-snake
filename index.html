@@ -80,26 +80,6 @@
             border: 3px solid #ff00ff;
             z-index: 10;
         }
-        #bottom-space {
-            position: relative;
-            width: 100%;
-            max-width: 440px;
-            height: 110px;
-            background: #000011;
-            margin: 8px auto 0;
-            overflow: hidden;
-            border-radius: 10px;
-            box-shadow: 0 0 25px rgba(50, 0, 100, 0.4);
-            border: 2px solid #ffffff22;
-        }
-        .pixel-star {
-            position: absolute;
-            background: #ffffff;
-            border-radius: 50%;
-            box-shadow: 0 0 4px #ffffff, 0 0 8px #aaaaff;
-            transition: opacity 0.35s ease;
-            pointer-events: none;
-        }
     </style>
 </head>
 <body>
@@ -114,8 +94,6 @@
         </div>
     </div>
 
-    <div id="bottom-space"></div>
-
     <div class="controls">
         <button id="up">↑</button>
         <div class="dpad">
@@ -125,7 +103,7 @@
         </div>
         <button id="restart">Restart Game</button>
     </div>
-    <p style="margin-top:8px; opacity:0.7; font-size:0.9em;">Tap arrow buttons or swipe on the game area to move</p>
+    <p style="margin-top:10px; opacity:0.7;">Tap arrow buttons or swipe on the game area to move</p>
 
     <script>
         const canvas = document.getElementById('game');
@@ -175,40 +153,6 @@
                 ctx.fillRect(star.x, star.y, star.size, star.size);
             });
             ctx.globalAlpha = 1;
-        }
-
-        // Simple pixel art starfield in the bottom empty space
-        function createBottomPixelStars() {
-            const container = document.getElementById('bottom-space');
-            if (!container) return;
-            container.innerHTML = '';
-            const numStars = 42;
-            for (let i = 0; i < numStars; i++) {
-                const star = document.createElement('div');
-                star.className = 'pixel-star';
-                const size = Math.random() * 2.8 + 1.2;
-                star.style.width = size + 'px';
-                star.style.height = size + 'px';
-                star.style.left = (Math.random() * 98 + 1) + '%';
-                star.style.top = (Math.random() * 92 + 4) + '%';
-                star.style.opacity = (Math.random() * 0.65 + 0.35).toFixed(2);
-                container.appendChild(star);
-            }
-
-            // Gentle twinkling animation for cute pixel art effect
-            setInterval(() => {
-                const starsList = container.querySelectorAll('.pixel-star');
-                if (starsList.length === 0) return;
-                const randomIndex = Math.floor(Math.random() * starsList.length);
-                const s = starsList[randomIndex];
-                if (s && s.parentNode) {
-                    const originalOpacity = s.style.opacity || '0.6';
-                    s.style.opacity = (Math.random() * 0.85 + 0.15).toFixed(2);
-                    setTimeout(() => {
-                        if (s && s.parentNode) s.style.opacity = originalOpacity;
-                    }, 380);
-                }
-            }, 280);
         }
 
         function draw() {
@@ -342,7 +286,6 @@
             document.getElementById('gameOver').style.display = 'none';
             randomFood();
             initStars();
-            createBottomPixelStars();
             clearInterval(gameInterval);
             gameInterval = setInterval(update, speed);
             draw();
