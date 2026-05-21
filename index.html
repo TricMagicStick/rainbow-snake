@@ -95,13 +95,14 @@
         let score = 0;
         let highScore = parseInt(localStorage.getItem('highScore')) || 0;
         let gameInterval;
-        let gameSpeed = 120;
+        let gameSpeed = 180;  // Slower starting speed
         let gameRunning = false;
         let nextFoodColor = 0;
 
+        // Rainbow colors starting with green for head
         const rainbowColors = [
-            '#ff0000', '#ff7f00', '#ffff00', '#00ff00', 
-            '#00ffff', '#0000ff', '#8b00ff'
+            '#00ff00', '#00ffff', '#0000ff', '#8b00ff', '#ff00ff',
+            '#ff0000', '#ff7f00', '#ffff00'
         ];
 
         document.getElementById('highScore').textContent = highScore;
@@ -113,7 +114,7 @@
                     y: Math.floor(Math.random() * tileCount)
                 };
             } while (snake.some(segment => segment.x === food.x && segment.y === food.y));
-            nextFoodColor = Math.floor(Math.random() * rainbowColors.length);
+            nextFoodColor = (snake.length) % rainbowColors.length;  // Matches next segment
         }
 
         function draw() {
@@ -145,74 +146,58 @@
             const y = head.y * gridSize;
             const size = gridSize;
 
-            // Eyes
-            ctx.fillStyle = 'white';
-            ctx.beginPath();
-            if (dx === 1) { // right
-                ctx.arc(x + size * 0.65, y + size * 0.35, size * 0.12, 0, Math.PI * 2);
-                ctx.arc(x + size * 0.65, y + size * 0.65, size * 0.12, 0, Math.PI * 2);
-            } else if (dx === -1) { // left
-                ctx.arc(x + size * 0.35, y + size * 0.35, size * 0.12, 0, Math.PI * 2);
-                ctx.arc(x + size * 0.35, y + size * 0.65, size * 0.12, 0, Math.PI * 2);
-            } else if (dy === -1) { // up
-                ctx.arc(x + size * 0.35, y + size * 0.35, size * 0.12, 0, Math.PI * 2);
-                ctx.arc(x + size * 0.65, y + size * 0.35, size * 0.12, 0, Math.PI * 2);
-            } else { // down
-                ctx.arc(x + size * 0.35, y + size * 0.65, size * 0.12, 0, Math.PI * 2);
-                ctx.arc(x + size * 0.65, y + size * 0.65, size * 0.12, 0, Math.PI * 2);
-            }
-            ctx.fill();
-
-            // Pupils
+            // Eyes - solid black (no whites)
             ctx.fillStyle = 'black';
             ctx.beginPath();
-            if (dx === 1) {
-                ctx.arc(x + size * 0.68, y + size * 0.35, size * 0.05, 0, Math.PI * 2);
-                ctx.arc(x + size * 0.68, y + size * 0.65, size * 0.05, 0, Math.PI * 2);
-            } else if (dx === -1) {
-                ctx.arc(x + size * 0.32, y + size * 0.35, size * 0.05, 0, Math.PI * 2);
-                ctx.arc(x + size * 0.32, y + size * 0.65, size * 0.05, 0, Math.PI * 2);
-            } else if (dy === -1) {
-                ctx.arc(x + size * 0.35, y + size * 0.32, size * 0.05, 0, Math.PI * 2);
-                ctx.arc(x + size * 0.65, y + size * 0.32, size * 0.05, 0, Math.PI * 2);
-            } else {
-                ctx.arc(x + size * 0.35, y + size * 0.68, size * 0.05, 0, Math.PI * 2);
-                ctx.arc(x + size * 0.65, y + size * 0.68, size * 0.05, 0, Math.PI * 2);
+            if (dx === 1) { // right
+                ctx.arc(x + size * 0.65, y + size * 0.4, size * 0.1, 0, Math.PI * 2);
+                ctx.arc(x + size * 0.65, y + size * 0.6, size * 0.1, 0, Math.PI * 2);
+            } else if (dx === -1) { // left
+                ctx.arc(x + size * 0.35, y + size * 0.4, size * 0.1, 0, Math.PI * 2);
+                ctx.arc(x + size * 0.35, y + size * 0.6, size * 0.1, 0, Math.PI * 2);
+            } else if (dy === -1) { // up
+                ctx.arc(x + size * 0.4, y + size * 0.35, size * 0.1, 0, Math.PI * 2);
+                ctx.arc(x + size * 0.6, y + size * 0.35, size * 0.1, 0, Math.PI * 2);
+            } else { // down
+                ctx.arc(x + size * 0.4, y + size * 0.65, size * 0.1, 0, Math.PI * 2);
+                ctx.arc(x + size * 0.6, y + size * 0.65, size * 0.1, 0, Math.PI * 2);
             }
             ctx.fill();
 
-            // Forked tongue (flicking animation)
-            const tongueLength = Math.sin(Date.now() / 100) * 3 + 8;
-            ctx.strokeStyle = '#ff4444';
-            ctx.lineWidth = 3;
+            // Forked tongue - more pronounced Y shape
+            const tongueLength = Math.sin(Date.now() / 80) * 4 + 10;
+            ctx.strokeStyle = '#ff2222';
+            ctx.lineWidth = 3.5;
+            ctx.lineCap = 'round';
             ctx.beginPath();
             if (dx === 1) {
-                ctx.moveTo(x + size * 0.85, y + size * 0.5);
+                ctx.moveTo(x + size * 0.9, y + size * 0.5);
                 ctx.lineTo(x + size + tongueLength, y + size * 0.5);
-                ctx.moveTo(x + size + tongueLength * 0.7, y + size * 0.5 - 3);
+                // Y fork
+                ctx.moveTo(x + size + tongueLength * 0.6, y + size * 0.5 - 4);
                 ctx.lineTo(x + size + tongueLength, y + size * 0.5);
-                ctx.moveTo(x + size + tongueLength * 0.7, y + size * 0.5 + 3);
+                ctx.moveTo(x + size + tongueLength * 0.6, y + size * 0.5 + 4);
                 ctx.lineTo(x + size + tongueLength, y + size * 0.5);
             } else if (dx === -1) {
-                ctx.moveTo(x + size * 0.15, y + size * 0.5);
+                ctx.moveTo(x + size * 0.1, y + size * 0.5);
                 ctx.lineTo(x - tongueLength, y + size * 0.5);
-                ctx.moveTo(x - tongueLength * 0.7, y + size * 0.5 - 3);
+                ctx.moveTo(x - tongueLength * 0.6, y + size * 0.5 - 4);
                 ctx.lineTo(x - tongueLength, y + size * 0.5);
-                ctx.moveTo(x - tongueLength * 0.7, y + size * 0.5 + 3);
+                ctx.moveTo(x - tongueLength * 0.6, y + size * 0.5 + 4);
                 ctx.lineTo(x - tongueLength, y + size * 0.5);
             } else if (dy === -1) {
-                ctx.moveTo(x + size * 0.5, y + size * 0.15);
+                ctx.moveTo(x + size * 0.5, y + size * 0.1);
                 ctx.lineTo(x + size * 0.5, y - tongueLength);
-                ctx.moveTo(x + size * 0.5 - 3, y - tongueLength * 0.7);
+                ctx.moveTo(x + size * 0.5 - 4, y - tongueLength * 0.6);
                 ctx.lineTo(x + size * 0.5, y - tongueLength);
-                ctx.moveTo(x + size * 0.5 + 3, y - tongueLength * 0.7);
+                ctx.moveTo(x + size * 0.5 + 4, y - tongueLength * 0.6);
                 ctx.lineTo(x + size * 0.5, y - tongueLength);
             } else {
-                ctx.moveTo(x + size * 0.5, y + size * 0.85);
+                ctx.moveTo(x + size * 0.5, y + size * 0.9);
                 ctx.lineTo(x + size * 0.5, y + size + tongueLength);
-                ctx.moveTo(x + size * 0.5 - 3, y + size + tongueLength * 0.7);
+                ctx.moveTo(x + size * 0.5 - 4, y + size + tongueLength * 0.6);
                 ctx.lineTo(x + size * 0.5, y + size + tongueLength);
-                ctx.moveTo(x + size * 0.5 + 3, y + size + tongueLength * 0.7);
+                ctx.moveTo(x + size * 0.5 + 4, y + size + tongueLength * 0.6);
                 ctx.lineTo(x + size * 0.5, y + size + tongueLength);
             }
             ctx.stroke();
@@ -246,9 +231,8 @@
                     localStorage.setItem('highScore', highScore);
                     document.getElementById('highScore').textContent = highScore;
                 }
-                // Add new segment with the food's color (already cycled by position)
                 randomFood();
-                if (gameSpeed > 60) gameSpeed -= 2;
+                if (gameSpeed > 70) gameSpeed -= 3;  // Gradual speed increase
                 clearInterval(gameInterval);
                 gameInterval = setInterval(gameLoop, gameSpeed);
             } else {
@@ -281,7 +265,7 @@
             dx = 0;
             dy = 0;
             score = 0;
-            gameSpeed = 120;
+            gameSpeed = 180;
             document.getElementById('score').textContent = score;
             document.getElementById('gameOver').style.display = 'none';
             randomFood();
