@@ -158,7 +158,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v10.8 - bigger stationary poof cloud (smaller more numerous particles + quicker gradual fade)</div>
+    <div id="debug">v11 - less blocky snake head shape</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -247,13 +247,17 @@
                 ctx.strokeRect(snake[i].x * grid + 1, snake[i].y * grid + 1, grid - 2, grid - 2);
             }
 
-            // Head always green with stronger subtle white outline
+            // Head - less blocky, slightly more snake-head shaped with rounded corners
             const head = snake[0];
             ctx.fillStyle = '#00ff00';
-            ctx.fillRect(head.x * grid + 1, head.y * grid + 1, grid - 2, grid - 2);
+            ctx.beginPath();
+            ctx.roundRect(head.x * grid + 1, head.y * grid + 1, grid - 2, grid - 2, 4.5);
+            ctx.fill();
             ctx.strokeStyle = 'rgba(255,255,255,0.45)';
             ctx.lineWidth = 1.8;
-            ctx.strokeRect(head.x * grid + 1, head.y * grid + 1, grid - 2, grid - 2);
+            ctx.beginPath();
+            ctx.roundRect(head.x * grid + 1, head.y * grid + 1, grid - 2, grid - 2, 4.5);
+            ctx.stroke();
 
             // Eyes - refined with subtle specular highlight for cuter, more polished look
             ctx.fillStyle = '#111111';
@@ -366,7 +370,7 @@
             const pulse = Math.sin(Date.now() / 300) * 9.5 + 16;
             ctx.save();
             ctx.shadowColor = food.color || rainbowColors[snake.length % rainbowColors.length];
-                ctx.shadowBlur = pulse;
+            ctx.shadowBlur = pulse;
             ctx.fillStyle = food.color || rainbowColors[snake.length % rainbowColors.length];
             ctx.beginPath();
             ctx.arc(food.x * grid + grid/2, food.y * grid + grid/2, 6.5, 0, Math.PI * 2);
