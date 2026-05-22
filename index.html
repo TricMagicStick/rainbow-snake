@@ -167,7 +167,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v12.3 - much more lively tongue flick animation</div>
+    <div id="debug">v12.4 - new phase-based quick-flick tongue (smol + cute)</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -202,7 +202,7 @@
         let gameInterval;
         let speed = 220;
         let gameOverFlag = false;
-        let tongueFrame = 0;
+        let tonguePhase = 0;
         let eatEffect = 0;
         let eatPoofX = 0;
         let eatPoofY = 0;
@@ -294,48 +294,71 @@
                 ctx.fillRect(head.x*grid + 11.8, head.y*grid + 11.8, highlightSize, highlightSize);
             }
 
-            // Much more lively, cute flicking tongue
+            // NEW: Phase-based quick-flick tongue (smol + cute)
             ctx.strokeStyle = '#ff2222';
-            ctx.lineWidth = 2.4;
+            ctx.lineWidth = 2;
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
-            tongueFrame += 0.85;
-            const flick = Math.sin(tongueFrame) * 3.0;
+
+            tonguePhase += 0.12;
+            if (tonguePhase > 1) tonguePhase = 0;
+
+            // Quick flick phases: extend fast (0-0.25), fork open (0.25-0.45), hold (0.45-0.65), retract fast (0.65-1)
+            let t = tonguePhase;
+            let extend = 0;
+            let forkOpen = 0;
+
+            if (t < 0.25) {
+                extend = t / 0.25;           // fast extend
+                forkOpen = extend * 0.6;
+            } else if (t < 0.45) {
+                extend = 1;
+                forkOpen = 0.6 + (t - 0.25) / 0.2 * 0.4;  // fork opens more
+            } else if (t < 0.65) {
+                extend = 1;
+                forkOpen = 1;                // hold
+            } else {
+                extend = 1 - (t - 0.65) / 0.35; // fast retract
+                forkOpen = extend;
+            }
+
+            const stemLen = 3.2 * extend;
+            const forkLen = 3.8 * extend;
+            const spread = 2.6 * forkOpen;
+            const flick = Math.sin(t * Math.PI * 2) * 0.6 * extend; // tiny side wiggle
+
             const hx = head.x * grid;
             const hy = head.y * grid;
-            const stemLen = 5;
-            const forkLen = 6;
-            const spread = 4.2;
 
             ctx.beginPath();
             if (dx === 1) { // right
                 ctx.moveTo(hx + grid - 1, hy + grid/2);
-                ctx.lineTo(hx + grid + stemLen, hy + grid/2 + flick * 0.32);
-                ctx.moveTo(hx + grid + stemLen, hy + grid/2 + flick * 0.32);
-                ctx.lineTo(hx + grid + stemLen + forkLen, hy + grid/2 + flick * 0.32 - spread);
-                ctx.moveTo(hx + grid + stemLen, hy + grid/2 + flick * 0.32);
-                ctx.lineTo(hx + grid + stemLen + forkLen, hy + grid/2 + flick * 0.32 + spread);
+                ctx.lineTo(hx + grid + stemLen, hy + grid/2 + flick);
+                ctx.moveTo(hx + grid + stemLen, hy + grid/2 + flick);
+                ctx.lineTo(hx + grid + stemLen + forkLen, hy + grid/2 + flick - spread);
+                ctx.moveTo(hx + grid + stemLen, hy + grid/2 + flick);
+                ctx.lineTo(hx + grid + stemLen + forkLen, hy + grid/2 + flick + spread);
             } else if (dx === -1) { // left
                 ctx.moveTo(hx + 1, hy + grid/2);
-                ctx.lineTo(hx - stemLen, hy + grid/2 + flick * 0.32);
-                ctx.moveTo(hx - stemLen, hy + grid/2 + flick * 0.32);
-                ctx.lineTo(hx - stemLen - forkLen, hy + grid/2 + flick * 0.32 - spread);
-                ctx.moveTo(hx - stemLen, hy + grid/2 + flick * 0.32);
-                ctx.lineTo(hx - stemLen - forkLen, hy + grid/2 + flick * 0.32 + spread);
+                ctx.lineTo(hx - stemLen, hy + grid/2 + flick);
+                ctx.moveTo(hx - stemLen, hy + grid/2 + flick);
+                ctx.lineTo(hx - stemLen - forkLen, hy + grid/2 + flick - spread);
+                ctx.moveTo(hx - stemLen, hy + grid/2 + flick);
+                ctx.lineTo(hx - stemLen - forkLen, hy + grid/2 + flick + spread);
             } else if (dy === -1) { // up
                 ctx.moveTo(hx + grid/2, hy + 1);
-                ctx.lineTo(hx + grid/2 + flick * 0.26, hy - stemLen);
-                ctx.moveTo(hx + grid/2 + flick * 0.26, hy - stemLen);
-                ctx.lineTo(hx + grid/2 + flick * 0.26 - spread, hy - stemLen - forkLen);
-                ctx.moveTo(hx + grid/2 + flick * 0.26, hy - stemLen);
-                ctx.lineTo(hx + grid/2 + flick * 0.26 + spread, hy - stemLen - forkLen);
+                ctx.lineTo(hx + grid/2 + flick * 0.7, hy - stemLen);
+                ctx.moveTo(hx + grid/2 + flick * 0.7, hy - stemLen);
+                ctx.lineTo(hx + grid/2 + flick * 0.7 - spread, hy - stemLen - forkLen);
+                ctx.moveTo(hx + grid/2 + flick * 0.7, hy - stemLen);
+                ctx.lineTo(hx + grid/2 + flick * 0.7 + spread, hy - stemLen - forkLen);
             } else { // down
                 ctx.moveTo(hx + grid/2, hy + grid - 1);
-                ctx.lineTo(hx + grid/2 + flick * 0.26, hy + grid + stemLen);
-                ctx.moveTo(hx + grid/2 + flick * 0.26, hy + grid + stemLen);
-                ctx.lineTo(hx + grid/2 + flick * 0.26 - spread, hy + grid + stemLen + forkLen);
-                ctx.moveTo(hx + grid/2 + flick * 0.26, hy + grid + stemLen);
-                ctx.lineTo(hx + grid/2 + flick * 0.26 + spread, hy + grid + stemLen + forkLen);
+                ctx.lineTo(hx + grid/2 + flick * 0.7, hy + grid + stemLen);
+                ctx.moveTo(hx + grid/2 + flick * 0.7, hy + grid + stemLen);
+                ctx.lineTo(hx + grid/2 + flick * 0.7 - spread, hy + grid + stemLen + forkLen);
+                ctx.moveTo(hx + grid/2 + flick * 0.7, hy + grid + stemLen);
+                ctx.lineTo(hx + grid/2 + flick * 0.7 + spread, hy + grid + stemLen + forkLen);
             }
             ctx.stroke();
 
@@ -428,6 +451,7 @@
             eatEffect = 0;
             eatPoofX = 0;
             eatPoofY = 0;
+            tonguePhase = 0;
             document.getElementById('score').innerText = `Score: ${score} | High Score: ${highScore}`;
             document.getElementById('gameOver').style.display = 'none';
             randomFood();
