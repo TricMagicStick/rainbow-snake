@@ -167,7 +167,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v12.8 - bezier curve smooth body (exploration)</div>
+    <div id="debug">v12.9 - matching smooth rounded head for bezier body</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -247,7 +247,7 @@
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             drawStars();
 
-            // Bezier curve smooth body (exploration)
+            // Bezier curve smooth body
             ctx.lineJoin = 'round';
             ctx.lineCap = 'round';
 
@@ -260,7 +260,6 @@
                 const x2 = curr.x * grid + grid / 2;
                 const y2 = curr.y * grid + grid / 2;
 
-                // Simple quadratic bezier for smooth connection
                 const cx = (x1 + x2) / 2;
                 const cy = (y1 + y2) / 2;
 
@@ -273,15 +272,32 @@
                 ctx.stroke();
             }
 
-            // Head - clean green block
+            // Matching smooth rounded head
             const head = snake[0];
+            const hx = head.x * grid + 1;
+            const hy = head.y * grid + 1;
+
             ctx.fillStyle = '#00ff00';
-            ctx.fillRect(head.x * grid + 1, head.y * grid + 1, grid - 2, grid - 2);
+            ctx.beginPath();
+            ctx.roundRect(hx, hy, grid - 2, grid - 2, 5);
+            ctx.fill();
+
+            // Subtle gloss on head
+            ctx.fillStyle = 'rgba(255,255,255,0.35)';
+            ctx.beginPath();
+            ctx.roundRect(hx, hy, grid - 2, 5, 3);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.roundRect(hx, hy, 5, grid - 2, 3);
+            ctx.fill();
+
             ctx.strokeStyle = 'rgba(255,255,255,0.45)';
             ctx.lineWidth = 1.6;
-                ctx.strokeRect(head.x * grid + 1, head.y * grid + 1, grid - 2, grid - 2);
+            ctx.beginPath();
+            ctx.roundRect(hx, hy, grid - 2, grid - 2, 5);
+            ctx.stroke();
 
-            // Eyes
+            // Eyes (positioned nicely on rounded head)
             ctx.fillStyle = '#111111';
             const eyeSize = 4;
             const highlightSize = 1.4;
