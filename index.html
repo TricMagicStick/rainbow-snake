@@ -167,7 +167,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v12.9 - matching smooth rounded head for bezier body</div>
+    <div id="debug">v12.9.1 - matching smooth rounded head for bezier body (iOS cache fix attempt)</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -297,7 +297,7 @@
             ctx.roundRect(hx, hy, grid - 2, grid - 2, 5);
             ctx.stroke();
 
-            // Eyes (positioned nicely on rounded head)
+            // Eyes
             ctx.fillStyle = '#111111';
             const eyeSize = 4;
             const highlightSize = 1.4;
