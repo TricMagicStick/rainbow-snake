@@ -167,7 +167,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v12.6 - pixel art food (cute glowing orb style)</div>
+    <div id="debug">v12.7 - glossy shiny body segments</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -247,13 +247,29 @@
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             drawStars();
 
-            // Body segments
+            // Body segments with glossy shine
             for (let i = 1; i < snake.length; i++) {
-                ctx.fillStyle = rainbowColors[ i % rainbowColors.length ];
-                ctx.fillRect(snake[i].x * grid + 1, snake[i].y * grid + 1, grid - 2, grid - 2);
+                const bx = snake[i].x * grid + 1;
+                const by = snake[i].y * grid + 1;
+                const bcol = rainbowColors[i % rainbowColors.length];
+
+                // Base color
+                ctx.fillStyle = bcol;
+                ctx.fillRect(bx, by, grid - 2, grid - 2);
+
+                // Glossy highlight (top-left shine)
+                ctx.fillStyle = 'rgba(255,255,255,0.45)';
+                ctx.fillRect(bx, by, grid - 3, 5);
+                ctx.fillRect(bx, by, 5, grid - 3);
+
+                // Subtle edge highlight for extra gloss
+                ctx.fillStyle = 'rgba(255,255,255,0.25)';
+                ctx.fillRect(bx + 1, by + 1, grid - 4, 2);
+
+                // Outline
                 ctx.strokeStyle = 'rgba(255,255,255,0.38)';
                 ctx.lineWidth = 1.2;
-                ctx.strokeRect(snake[i].x * grid + 1, snake[i].y * grid + 1, grid - 2, grid - 2);
+                ctx.strokeRect(bx, by, grid - 2, grid - 2);
             }
 
             // Head - clean green block
@@ -361,12 +377,11 @@
             }
             ctx.stroke();
 
-            // NEW: Cute pixel art food (small glowing orb style)
+            // Pixel art food (shiny orb)
             const fx = food.x * grid + grid/2;
             const fy = food.y * grid + grid/2;
             const fcol = food.color || '#ff00ff';
 
-            // Soft glow behind
             ctx.save();
             ctx.shadowColor = fcol;
             ctx.shadowBlur = 14;
@@ -376,21 +391,18 @@
             ctx.fill();
             ctx.restore();
 
-            // Pixel orb core (simple cute  pixel style)
             ctx.fillStyle = fcol;
             ctx.fillRect(fx - 4, fy - 4, 8, 8);
 
-            // Highlight pixels for cute shine
             ctx.fillStyle = '#ffffff';
             ctx.fillRect(fx - 3, fy - 3, 3, 3);
             ctx.fillRect(fx + 1, fy + 1, 2, 2);
 
-            // Tiny dark outline pixels for definition
             ctx.fillStyle = 'rgba(0,0,0,0.35)';
             ctx.fillRect(fx - 4, fy + 3, 2, 1);
             ctx.fillRect(fx + 3, fy - 4, 1, 2);
 
-            // Poof + ring effects
+            // Poof + ring
             if (eatEffect > 0) {
                 ctx.save();
                 const t = eatEffect / 14;
