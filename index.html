@@ -167,7 +167,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v12.4 - new phase-based quick-flick tongue (smol + cute)</div>
+    <div id="debug">v12.5 - slightly longer + more pronounced Y-shaped tongue</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -294,7 +294,7 @@
                 ctx.fillRect(head.x*grid + 11.8, head.y*grid + 11.8, highlightSize, highlightSize);
             }
 
-            // NEW: Phase-based quick-flick tongue (smol + cute)
+            // Phase-based quick-flick tongue - slightly longer + more Y-shaped
             ctx.strokeStyle = '#ff2222';
             ctx.lineWidth = 2;
             ctx.lineCap = 'round';
@@ -303,29 +303,28 @@
             tonguePhase += 0.12;
             if (tonguePhase > 1) tonguePhase = 0;
 
-            // Quick flick phases: extend fast (0-0.25), fork open (0.25-0.45), hold (0.45-0.65), retract fast (0.65-1)
             let t = tonguePhase;
             let extend = 0;
             let forkOpen = 0;
 
             if (t < 0.25) {
-                extend = t / 0.25;           // fast extend
+                extend = t / 0.25;
                 forkOpen = extend * 0.6;
             } else if (t < 0.45) {
                 extend = 1;
-                forkOpen = 0.6 + (t - 0.25) / 0.2 * 0.4;  // fork opens more
+                forkOpen = 0.6 + (t - 0.25) / 0.2 * 0.4;
             } else if (t < 0.65) {
                 extend = 1;
-                forkOpen = 1;                // hold
+                forkOpen = 1;
             } else {
-                extend = 1 - (t - 0.65) / 0.35; // fast retract
+                extend = 1 - (t - 0.65) / 0.35;
                 forkOpen = extend;
             }
 
-            const stemLen = 3.2 * extend;
-            const forkLen = 3.8 * extend;
-            const spread = 2.6 * forkOpen;
-            const flick = Math.sin(t * Math.PI * 2) * 0.6 * extend; // tiny side wiggle
+            const stemLen = 4.0 * extend;
+            const forkLen = 5.0 * extend;
+            const spread = 3.2 * forkOpen;
+            const flick = Math.sin(t * Math.PI * 2) * 0.6 * extend;
 
             const hx = head.x * grid;
             const hy = head.y * grid;
