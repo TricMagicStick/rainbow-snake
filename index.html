@@ -10,21 +10,23 @@
             padding: 0;
             background: linear-gradient(#2a0033, #000033);
             color: white;
-            font-family: Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             touch-action: manipulation;
+            padding: 12px 0;
         }
         h1 {
-            margin: 8px 0 4px;
-            font-size: 2.6em;
-            font-weight: bold;
+            margin: 0 0 2px;
+            font-size: 2.1em;
+            font-weight: 700;
+            letter-spacing: -0.5px;
             background: linear-gradient(90deg, #ff0000, #ff8800, #ffff00, #00ff00, #00ffff, #0088ff, #aa00ff, #ff00ff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 20px rgba(255,255,255,0.6);
+            text-shadow: 0 0 20px rgba(255,255,255,0.5);
             animation: rainbowShift 4s linear infinite;
         }
         @keyframes rainbowShift {
@@ -32,66 +34,45 @@
             100% { background-position: 200% 50%; }
         }
         #score {
-            font-size: 1.2em;
+            font-size: 0.95em;
             margin-bottom: 8px;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            color: #cccccc;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+        #debug {
+            font-size: 9px;
+            opacity: 0.25;
+            margin-bottom: 6px;
+            color: #aaa;
         }
         #game-container {
             position: relative;
-            box-shadow: 0 0 30px #ff00ff;
-            border: 4px solid #ffffff33;
-            border-radius: 12px;
+            box-shadow: 0 0 35px #ff00ff, inset 0 0 0 1px #ffffff22;
+            border: 3px solid #ffffff33;
+            border-radius: 16px;
             background: #000;
+            overflow: hidden;
         }
         canvas {
             display: block;
             image-rendering: pixelated;
         }
-        .controls {
-            margin-top: 15px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-        }
-        .dpad {
-            display: grid;
-            grid-template-columns: repeat(3, 60px);
-            gap: 8px;
-        }
-        button {
-            background: rgba(255,255,255,0.15);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 28px;
-            width: 60px;
-            height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.1s ease, background 0.1s ease;
-        }
-        button:active {
-            transform: scale(0.92);
-            background: rgba(255,255,255,0.3);
-        }
         #restart {
             position: absolute;
-            bottom: 5px;
-            right: -48px;
-            width: 34px;
-            height: 34px;
+            top: 8px;
+            right: 8px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             background: #0088ff;
             color: white;
             border: 2px solid #ffffff55;
-            font-size: 18px;
+            font-size: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 2px 10px rgba(0,136,255,0.45);
-            transition: transform 0.1s ease, background 0.1s ease, box-shadow 0.1s ease;
+            box-shadow: 0 2px 8px rgba(0,136,255,0.4);
+            transition: transform 0.1s ease, background 0.1s ease;
             z-index: 20;
             padding: 0;
             line-height: 1;
@@ -100,7 +81,37 @@
         #restart:active {
             transform: scale(0.88);
             background: #0066cc;
-            box-shadow: 0 1px 6px rgba(0,136,255,0.7);
+        }
+        .controls {
+            margin-top: 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+        .dpad {
+            display: grid;
+            grid-template-columns: repeat(3, 56px);
+            gap: 6px;
+        }
+        button {
+            background: rgba(255,255,255,0.12);
+            color: white;
+            border: 1px solid #ffffff33;
+            border-radius: 12px;
+            font-size: 24px;
+            width: 56px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.1s ease, background 0.1s ease, border-color 0.1s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+        button:active {
+            transform: scale(0.92);
+            background: rgba(255,255,255,0.22);
+            border-color: #ffffff55;
         }
         #gameOver {
             position: absolute;
@@ -108,33 +119,33 @@
             left: 50%;
             transform: translate(-50%, -50%);
             background: rgba(0,0,0,0.92);
-            padding: 24px 20px;
-            border-radius: 18px;
+            padding: 22px 18px;
+            border-radius: 16px;
             text-align: center;
             display: none;
-            border: 3px solid #ff00ff;
-            box-shadow: 0 0 25px rgba(255,0,255,0.4);
+            border: 2px solid #ff00ff;
+            box-shadow: 0 0 25px rgba(255,0,255,0.35);
             z-index: 10;
             width: 82%;
-            max-width: 260px;
+            max-width: 240px;
             box-sizing: border-box;
         }
         #gameOver h2 {
             color: #ff3333;
-            font-weight: bold;
-            text-shadow: 0 0 10px #ff3333, 0 0 20px #ff0000;
+            font-weight: 700;
+            text-shadow: 0 0 10px #ff3333, 0 0 18px #ff0000;
             animation: pulseGlow 1.6s infinite ease-in-out;
-            margin: 0 0 6px 0;
-            font-size: 1.55em;
+            margin: 0 0 4px 0;
+            font-size: 1.45em;
         }
         @keyframes pulseGlow {
-            0%, 100% { text-shadow: 0 0 8px #ff3333, 0 0 18px #ff0000; }
-            50% { text-shadow: 0 0 22px #ff3333, 0 0 38px #ff0000; }
+            0%, 100% { text-shadow: 0 0 8px #ff3333, 0 0 16px #ff0000; }
+            50% { text-shadow: 0 0 20px #ff3333, 0 0 32px #ff0000; }
         }
         #gameOver p {
-            margin: 6px 0 16px;
+            margin: 4px 0 14px;
             color: #cccccc;
-            font-size: 1.05em;
+            font-size: 0.95em;
         }
         #gameOver button {
             display: block;
@@ -142,32 +153,31 @@
             background: #1a001a;
             color: #ffffff;
             border: 2px solid #ff00ff;
-            border-radius: 12px;
-            padding: 12px 24px;
-            font-size: 16px;
-            min-height: 44px;
-            min-width: 120px;
+            border-radius: 10px;
+            padding: 10px 22px;
+            font-size: 15px;
+            min-height: 42px;
+            min-width: 110px;
             cursor: pointer;
-            box-shadow: 0 0 12px rgba(255,0,255,0.35);
+            box-shadow: 0 0 10px rgba(255,0,255,0.3);
             transition: all 0.1s ease;
         }
         #gameOver button:active {
             transform: scale(0.96);
             background: #330033;
-            box-shadow: 0 0 18px #ff00ff;
         }
-        #debug {
-            font-size: 11px;
-            opacity: 0.35;
-            margin-top: 6px;
-            color: #aaa;
+        p.instruction {
+            margin-top: 8px;
+            font-size: 0.75em;
+            opacity: 0.55;
+            text-align: center;
         }
     </style>
 </head>
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v13.2 - correct layering (head on top, tail behind)</div>
+    <div id="debug">v13.3 - polished mobile UI</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -187,7 +197,7 @@
             <button id="right">→</button>
         </div>
     </div>
-    <p style="margin-top:10px; opacity:0.7;">Tap arrow buttons or swipe on the game area to move</p>
+    <p class="instruction">Tap arrows or swipe on the game area</p>
 
     <script>
         const canvas = document.getElementById('game');
@@ -219,7 +229,6 @@
             };
         }
 
-        // Twinkling starfield inside game canvas
         let stars = [];
         function initStars() {
             stars = [];
@@ -247,7 +256,6 @@
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             drawStars();
 
-            // Bezier body with tapered tail - drawn tail-first so head sits on top
             ctx.lineJoin = 'round';
             ctx.lineCap = 'round';
 
@@ -266,7 +274,6 @@
                 const tailFactor = (snake.length - i) / snake.length;
                 const baseWidth = (grid - 3) * (0.35 + tailFactor * 0.65);
 
-                // Shadow
                 ctx.strokeStyle = 'rgba(0,0,0,0.25)';
                 ctx.lineWidth = baseWidth;
                 ctx.beginPath();
@@ -274,7 +281,6 @@
                 ctx.quadraticCurveTo(cx + 1, cy + 1, x2 + 1, y2 + 1);
                 ctx.stroke();
 
-                // Main color
                 ctx.strokeStyle = rainbowColors[i % rainbowColors.length];
                 ctx.lineWidth = baseWidth;
                 ctx.beginPath();
@@ -282,7 +288,6 @@
                 ctx.quadraticCurveTo(cx, cy, x2, y2);
                 ctx.stroke();
 
-                // Highlight
                 ctx.strokeStyle = 'rgba(255,255,255,0.25)';
                 ctx.lineWidth = baseWidth * 0.45;
                 ctx.beginPath();
@@ -291,7 +296,6 @@
                 ctx.stroke();
             }
 
-            // Head
             const head = snake[0];
             const cx = head.x * grid + grid / 2;
             const cy = head.y * grid + grid / 2;
@@ -338,29 +342,28 @@
             ctx.arc(cx, cy, grid / 2 - 1, 0, Math.PI * 2);
             ctx.stroke();
 
-            // Eyes
             ctx.fillStyle = '#111111';
             const eyeSize = 4;
             const highlightSize = 1.4;
-            if (dx === 1) { // right
+            if (dx === 1) {
                 ctx.fillRect(head.x*grid + 11, head.y*grid + 5, eyeSize, eyeSize);
                 ctx.fillRect(head.x*grid + 11, head.y*grid + 11, eyeSize, eyeSize);
                 ctx.fillStyle = '#ffffff';
                 ctx.fillRect(head.x*grid + 11.8, head.y*grid + 5.8, highlightSize, highlightSize);
                 ctx.fillRect(head.x*grid + 11.8, head.y*grid + 11.8, highlightSize, highlightSize);
-            } else if (dx === -1) { // left
+            } else if (dx === -1) {
                 ctx.fillRect(head.x*grid + 5, head.y*grid + 5, eyeSize, eyeSize);
                 ctx.fillRect(head.x*grid + 5, head.y*grid + 11, eyeSize, eyeSize);
                 ctx.fillStyle = '#ffffff';
                 ctx.fillRect(head.x*grid + 5.8, head.y*grid + 5.8, highlightSize, highlightSize);
                 ctx.fillRect(head.x*grid + 5.8, head.y*grid + 11.8, highlightSize, highlightSize);
-            } else if (dy === -1) { // up
+            } else if (dy === -1) {
                 ctx.fillRect(head.x*grid + 5, head.y*grid + 5, eyeSize, eyeSize);
                 ctx.fillRect(head.x*grid + 11, head.y*grid + 5, eyeSize, eyeSize);
                 ctx.fillStyle = '#ffffff';
                 ctx.fillRect(head.x*grid + 5.8, head.y*grid + 5.8, highlightSize, highlightSize);
                 ctx.fillRect(head.x*grid + 11.8, head.y*grid + 5.8, highlightSize, highlightSize);
-            } else { // down
+            } else {
                 ctx.fillRect(head.x*grid + 5, head.y*grid + 11, eyeSize, eyeSize);
                 ctx.fillRect(head.x*grid + 11, head.y*grid + 11, eyeSize, eyeSize);
                 ctx.fillStyle = '#ffffff';
@@ -368,7 +371,6 @@
                 ctx.fillRect(head.x*grid + 11.8, head.y*grid + 11.8, highlightSize, highlightSize);
             }
 
-            // Tongue
             ctx.strokeStyle = '#ff2222';
             ctx.lineWidth = 2;
             ctx.lineCap = 'round';
@@ -404,28 +406,28 @@
             const hy = head.y * grid;
 
             ctx.beginPath();
-            if (dx === 1) { // right
+            if (dx === 1) {
                 ctx.moveTo(hx + grid - 1, hy + grid/2);
                 ctx.lineTo(hx + grid + stemLen, hy + grid/2 + flick);
                 ctx.moveTo(hx + grid + stemLen, hy + grid/2 + flick);
                 ctx.lineTo(hx + grid + stemLen + forkLen, hy + grid/2 + flick - spread);
                 ctx.moveTo(hx + grid + stemLen, hy + grid/2 + flick);
                 ctx.lineTo(hx + grid + stemLen + forkLen, hy + grid/2 + flick + spread);
-            } else if (dx === -1) { // left
+            } else if (dx === -1) {
                 ctx.moveTo(hx + 1, hy + grid/2);
                 ctx.lineTo(hx - stemLen, hy + grid/2 + flick);
                 ctx.moveTo(hx - stemLen, hy + grid/2 + flick);
                 ctx.lineTo(hx - stemLen - forkLen, hy + grid/2 + flick - spread);
                 ctx.moveTo(hx - stemLen, hy + grid/2 + flick);
                 ctx.lineTo(hx - stemLen - forkLen, hy + grid/2 + flick + spread);
-            } else if (dy === -1) { // up
+            } else if (dy === -1) {
                 ctx.moveTo(hx + grid/2, hy + 1);
                 ctx.lineTo(hx + grid/2 + flick * 0.7, hy - stemLen);
                 ctx.moveTo(hx + grid/2 + flick * 0.7, hy - stemLen);
                 ctx.lineTo(hx + grid/2 + flick * 0.7 - spread, hy - stemLen - forkLen);
                 ctx.moveTo(hx + grid/2 + flick * 0.7, hy - stemLen);
                 ctx.lineTo(hx + grid/2 + flick * 0.7 + spread, hy - stemLen - forkLen);
-            } else { // down
+            } else {
                 ctx.moveTo(hx + grid/2, hy + grid - 1);
                 ctx.lineTo(hx + grid/2 + flick * 0.7, hy + grid + stemLen);
                 ctx.moveTo(hx + grid/2 + flick * 0.7, hy + grid + stemLen);
@@ -435,7 +437,6 @@
             }
             ctx.stroke();
 
-            // Food
             const fx = food.x * grid + grid/2;
             const fy = food.y * grid + grid/2;
             const fcol = food.color || '#ff00ff';
@@ -551,7 +552,6 @@
             startGame();
         }
 
-        // Controls
         document.getElementById('up').addEventListener('click', () => { if (dy !== 1) { dx = 0; dy = -1; } });
         document.getElementById('down').addEventListener('click', () => { if (dy !== -1) { dx = 0; dy = 1; } });
         document.getElementById('left').addEventListener('click', () => { if (dx !== 1) { dx = -1; dy = 0; } });
