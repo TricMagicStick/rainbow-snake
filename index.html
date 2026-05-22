@@ -167,7 +167,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v13.1 - richer depth + stronger gloss on head and body</div>
+    <div id="debug">v13.2 - correct layering (head on top, tail behind)</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -247,11 +247,11 @@
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             drawStars();
 
-            // Bezier body with tapered tail + depth
+            // Bezier body with tapered tail - drawn tail-first so head sits on top
             ctx.lineJoin = 'round';
             ctx.lineCap = 'round';
 
-            for (let i = 1; i < snake.length; i++) {
+            for (let i = snake.length - 1; i >= 1; i--) {
                 const prev = snake[i - 1];
                 const curr = snake[i];
 
@@ -266,7 +266,7 @@
                 const tailFactor = (snake.length - i) / snake.length;
                 const baseWidth = (grid - 3) * (0.35 + tailFactor * 0.65);
 
-                // Subtle depth shadow stroke (darker, slightly offset)
+                // Shadow
                 ctx.strokeStyle = 'rgba(0,0,0,0.25)';
                 ctx.lineWidth = baseWidth;
                 ctx.beginPath();
@@ -274,7 +274,7 @@
                 ctx.quadraticCurveTo(cx + 1, cy + 1, x2 + 1, y2 + 1);
                 ctx.stroke();
 
-                // Main colored stroke
+                // Main color
                 ctx.strokeStyle = rainbowColors[i % rainbowColors.length];
                 ctx.lineWidth = baseWidth;
                 ctx.beginPath();
@@ -282,7 +282,7 @@
                 ctx.quadraticCurveTo(cx, cy, x2, y2);
                 ctx.stroke();
 
-                // Extra bright highlight stroke on top
+                // Highlight
                 ctx.strokeStyle = 'rgba(255,255,255,0.25)';
                 ctx.lineWidth = baseWidth * 0.45;
                 ctx.beginPath();
@@ -291,24 +291,21 @@
                 ctx.stroke();
             }
 
-            // Rounded hybrid head with richer depth
+            // Head
             const head = snake[0];
             const cx = head.x * grid + grid / 2;
             const cy = head.y * grid + grid / 2;
 
-            // Shadow layer
             ctx.fillStyle = 'rgba(0,0,0,0.2)';
             ctx.beginPath();
             ctx.arc(cx + 1.5, cy + 1.5, grid / 2 - 1, 0, Math.PI * 2);
             ctx.fill();
 
-            // Main head
             ctx.fillStyle = '#00ff00';
             ctx.beginPath();
             ctx.arc(cx, cy, grid / 2 - 1, 0, Math.PI * 2);
             ctx.fill();
 
-            // Stronger multi-layer gloss
             ctx.fillStyle = 'rgba(255,255,255,0.45)';
             ctx.beginPath();
             if (dx === 1) {
@@ -335,7 +332,6 @@
             }
             ctx.fill();
 
-            // Outline
             ctx.strokeStyle = 'rgba(255,255,255,0.5)';
             ctx.lineWidth = 1.8;
             ctx.beginPath();
@@ -372,7 +368,7 @@
                 ctx.fillRect(head.x*grid + 11.8, head.y*grid + 11.8, highlightSize, highlightSize);
             }
 
-            // Phase-based quick-flick tongue
+            // Tongue
             ctx.strokeStyle = '#ff2222';
             ctx.lineWidth = 2;
             ctx.lineCap = 'round';
@@ -439,7 +435,7 @@
             }
             ctx.stroke();
 
-            // Pixel art food
+            // Food
             const fx = food.x * grid + grid/2;
             const fy = food.y * grid + grid/2;
             const fcol = food.color || '#ff00ff';
@@ -464,7 +460,6 @@
             ctx.fillRect(fx - 4, fy + 3, 2, 1);
             ctx.fillRect(fx + 3, fy - 4, 1, 2);
 
-            // Poof + ring
             if (eatEffect > 0) {
                 ctx.save();
                 const t = eatEffect / 14;
