@@ -167,7 +167,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v12.7.2 - rounded body segments for smoother look (kept strong outline contrast)</div>
+    <div id="debug">v12.8 - bezier curve smooth body (exploration)</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -247,42 +247,39 @@
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             drawStars();
 
-            // Body segments - rounded + glossy with strong outline contrast
+            // Bezier curve smooth body (exploration)
+            ctx.lineJoin = 'round';
+            ctx.lineCap = 'round';
+
             for (let i = 1; i < snake.length; i++) {
-                const bx = snake[i].x * grid + 1;
-                const by = snake[i].y * grid + 1;
-                const bcol = rainbowColors[i % rainbowColors.length];
+                const prev = snake[i - 1];
+                const curr = snake[i];
 
-                // Rounded body segment
-                ctx.fillStyle = bcol;
-                ctx.beginPath();
-                ctx.roundRect(bx, by, grid - 2, grid - 2, 3);
-                ctx.fill();
+                const x1 = prev.x * grid + grid / 2;
+                const y1 = prev.y * grid + grid / 2;
+                const x2 = curr.x * grid + grid / 2;
+                const y2 = curr.y * grid + grid / 2;
 
-                // Glossy highlight on rounded shape
-                ctx.fillStyle = 'rgba(255,255,255,0.38)';
-                ctx.beginPath();
-                ctx.roundRect(bx, by, grid - 2, 4, 2);
-                ctx.fill();
-                ctx.beginPath();
-                ctx.roundRect(bx, by, 4, grid - 2, 2);
-                ctx.fill();
+                // Simple quadratic bezier for smooth connection
+                const cx = (x1 + x2) / 2;
+                const cy = (y1 + y2) / 2;
 
-                // Strong outline contrast (user liked this)
-                ctx.strokeStyle = 'rgba(255,255,255,0.42)';
-                ctx.lineWidth = 1.4;
+                ctx.strokeStyle = rainbowColors[i % rainbowColors.length];
+                ctx.lineWidth = grid - 3;
+
                 ctx.beginPath();
-                ctx.roundRect(bx, by, grid - 2, grid - 2, 3);
+                ctx.moveTo(x1, y1);
+                ctx.quadraticCurveTo(cx, cy, x2, y2);
                 ctx.stroke();
             }
 
-            // Head - clean green block (kept mostly square as preferred)
+            // Head - clean green block
             const head = snake[0];
             ctx.fillStyle = '#00ff00';
             ctx.fillRect(head.x * grid + 1, head.y * grid + 1, grid - 2, grid - 2);
             ctx.strokeStyle = 'rgba(255,255,255,0.45)';
             ctx.lineWidth = 1.6;
-            ctx.strokeRect(head.x * grid + 1, head.y * grid + 1, grid - 2, grid - 2);
+                ctx.strokeRect(head.x * grid + 1, head.y * grid + 1, grid - 2, grid - 2);
 
             // Eyes
             ctx.fillStyle = '#111111';
