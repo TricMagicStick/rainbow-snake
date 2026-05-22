@@ -176,30 +176,27 @@
             margin-top: 16px;
             width: 100%;
             max-width: 300px;
-            height: 56px;
+            height: 52px;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 6px;
-            opacity: 0.85;
+            opacity: 0.75;
         }
-        .elegant-line {
-            height: 1.5px;
-            background: linear-gradient(to right, transparent, #ffffff55, transparent);
+        .noise-layer {
             width: 100%;
-            max-width: 260px;
-        }
-        .elegant-line.thin {
-            height: 1px;
-            background: linear-gradient(to right, transparent, #ffffff44, transparent);
+            max-width: 280px;
+            height: 42px;
+            background: white;
+            filter: url(#subtleNoise);
+            opacity: 0.12;
+            border-radius: 2px;
         }
     </style>
 </head>
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v14.6.11 - improved elegant linework</div>
+    <div id="debug">v14.6.2 - procedural svg noise</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -220,13 +217,18 @@
         </div>
     </div>
 
-    <!-- Improved Elegant Linework Bottom -->
+    <!-- Procedural SVG Noise Bottom -->
     <div class="bottom-creative">
-        <div class="elegant-line thin"></div>
-        <div class="elegant-line"></div>
-        <div class="elegant-line thin"></div>
-        <div class="elegant-line"></div>
+        <div class="noise-layer"></div>
     </div>
+
+    <!-- SVG Noise Filter -->
+    <svg width="0" height="0" style="position:absolute">
+        <filter id="subtleNoise">
+            <feTurbulence type="fractalNoise" baseFrequency="0.015" numOctaves="2" stitchTiles="stitch"/>
+            <feDisplacementMap in="SourceGraphic" scale="12"/>
+        </filter>
+    </svg>
 
     <script>
         const canvas = document.getElementById('game');
