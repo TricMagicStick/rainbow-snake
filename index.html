@@ -7,7 +7,7 @@
     <style>
         body {
             margin: 0;
-            padding: 48px 0 20px;
+            padding: 48px 0 24px;
             background: linear-gradient(#2a0033, #000033);
             color: white;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -18,7 +18,7 @@
             touch-action: manipulation;
         }
         h1 {
-            margin: 0 0 2px;
+            margin: 0 0 4px;
             font-size: 2.35em;
             font-weight: 800;
             letter-spacing: -1.2px;
@@ -37,7 +37,7 @@
         }
         #score {
             font-size: 1.05em;
-            margin-bottom: 4px;
+            margin-bottom: 8px;
             color: #dddddd;
             text-shadow: 0 1px 3px rgba(0,0,0,0.4);
         }
@@ -88,7 +88,7 @@
             background: #0066cc;
         }
         .controls {
-            margin-top: 18px;
+            margin-top: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -171,44 +171,12 @@
             transform: scale(0.96);
             background: #330033;
         }
-        .bottom-mural {
-            margin-top: 14px;
-            width: 100%;
-            max-width: 280px;
-            height: 38px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 7px;
-            opacity: 0.9;
-        }
-        .pixel-star {
-            width: 6px;
-            height: 6px;
-            background: #ffffff;
-            box-shadow: 0 0 8px #ffffff;
-            animation: twinkle 1.6s infinite alternate;
-        }
-        .pixel-star:nth-child(2) { animation-delay: 0.5s; }
-        .pixel-star:nth-child(3) { animation-delay: 1.0s; }
-        .pixel-star:nth-child(4) { animation-delay: 0.3s; }
-        .pixel-star:nth-child(5) { animation-delay: 0.8s; }
-        @keyframes twinkle {
-            0% { opacity: 0.35; transform: scale(0.6); }
-            100% { opacity: 1; transform: scale(1); }
-        }
-        .mini-snake {
-            font-size: 15px;
-            letter-spacing: 1.5px;
-            opacity: 0.95;
-            text-shadow: 0 0 6px #ff00ff;
-        }
     </style>
 </head>
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v13.8.2 - more visible version marker</div>
+    <div id="debug">v14.0 - foundation cleanup (mural removed)</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -227,15 +195,6 @@
             <button id="down">↓</button>
             <button id="right">→</button>
         </div>
-    </div>
-
-    <!-- Pixel art mural -->
-    <div class="bottom-mural">
-        <div class="pixel-star"></div>
-        <div class="pixel-star"></div>
-        <span class="mini-snake">~🌈🐍~</span>
-        <div class="pixel-star"></div>
-        <div class="pixel-star"></div>
     </div>
 
     <script>
