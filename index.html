@@ -158,7 +158,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v11.5 - narrower head + slower starting speed</div>
+    <div id="debug">v11.6 - fixed blank screen (syntax error) + narrower head + slower speed</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -430,7 +430,6 @@
                 eatEffect = 14;
                 randomFood();
                 if (speed > 120) speed -= 2;
-                }
             } else {
                 snake.pop();
             }
