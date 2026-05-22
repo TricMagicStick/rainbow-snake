@@ -158,7 +158,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v11.9.2 - tongue fixed for left and up directions</div>
+    <div id="debug">v11.9.3 - eyes moved further forward + tongue fixed for left/up</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -247,7 +247,7 @@
                 ctx.strokeRect(snake[i].x * grid + 1, snake[i].y * grid + 1, grid - 2, grid - 2);
             }
 
-            // Head - slightly larger than v11.9 but still slender + tapered + eyes forward
+            // Head - slightly larger than v11.9 but still slender + tapered + eyes very forward
             const head = snake[0];
             ctx.fillStyle = '#00ff00';
             ctx.strokeStyle = 'rgba(255,255,255,0.45)';
@@ -291,37 +291,37 @@
                 ctx.stroke();
             }
 
-            // Eyes moved further forward on the head
+            // Eyes moved very far forward on the head (all directions)
             ctx.fillStyle = '#111111';
             const eyeSize = 3.5;
             const highlightSize = 1.2;
             if (dx === 1) { // right
+                ctx.fillRect(head.x*grid + 4.5, head.y*grid + 5, eyeSize, eyeSize);
+                ctx.fillRect(head.x*grid + 4.5, head.y*grid + 10, eyeSize, eyeSize);
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(head.x*grid + 5.1, head.y*grid + 5.6, highlightSize, highlightSize);
+                ctx.fillRect(head.x*grid + 5.1, head.y*grid + 10.6, highlightSize, highlightSize);
+            } else if (dx === -1) { // left
+                ctx.fillRect(head.x*grid + 12, head.y*grid + 5, eyeSize, eyeSize);
+                ctx.fillRect(head.x*grid + 12, head.y*grid + 10, eyeSize, eyeSize);
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(head.x*grid + 12.6, head.y*grid + 5.6, highlightSize, highlightSize);
+                ctx.fillRect(head.x*grid + 12.6, head.y*grid + 10.6, highlightSize, highlightSize);
+            } else if (dy === -1) { // up
                 ctx.fillRect(head.x*grid + 5, head.y*grid + 5, eyeSize, eyeSize);
-                ctx.fillRect(head.x*grid + 5, head.y*grid + 10, eyeSize, eyeSize);
+                ctx.fillRect(head.x*grid + 10.5, head.y*grid + 5, eyeSize, eyeSize);
                 ctx.fillStyle = '#ffffff';
                 ctx.fillRect(head.x*grid + 5.6, head.y*grid + 5.6, highlightSize, highlightSize);
-                ctx.fillRect(head.x*grid + 5.6, head.y*grid + 10.6, highlightSize, highlightSize);
-            } else if (dx === -1) { // left
-                ctx.fillRect(head.x*grid + 11.5, head.y*grid + 5, eyeSize, eyeSize);
-                ctx.fillRect(head.x*grid + 11.5, head.y*grid + 10, eyeSize, eyeSize);
-                ctx.fillStyle = '#ffffff';
-                ctx.fillRect(head.x*grid + 12.1, head.y*grid + 5.6, highlightSize, highlightSize);
-                ctx.fillRect(head.x*grid + 12.1, head.y*grid + 10.6, highlightSize, highlightSize);
-            } else if (dy === -1) { // up
-                ctx.fillRect(head.x*grid + 5, head.y*grid + 5.5, eyeSize, eyeSize);
-                ctx.fillRect(head.x*grid + 10.5, head.y*grid + 5.5, eyeSize, eyeSize);
-                ctx.fillStyle = '#ffffff';
-                ctx.fillRect(head.x*grid + 5.6, head.y*grid + 6.1, highlightSize, highlightSize);
-                ctx.fillRect(head.x*grid + 11.1, head.y*grid + 6.1, highlightSize, highlightSize);
+                ctx.fillRect(head.x*grid + 11.1, head.y*grid + 5.6, highlightSize, highlightSize);
             } else { // down
-                ctx.fillRect(head.x*grid + 5, head.y*grid + 9.5, eyeSize, eyeSize);
-                ctx.fillRect(head.x*grid + 10.5, head.y*grid + 9.5, eyeSize, eyeSize);
+                ctx.fillRect(head.x*grid + 5, head.y*grid + 10, eyeSize, eyeSize);
+                ctx.fillRect(head.x*grid + 10.5, head.y*grid + 10, eyeSize, eyeSize);
                 ctx.fillStyle = '#ffffff';
-                ctx.fillRect(head.x*grid + 5.6, head.y*grid + 10.1, highlightSize, highlightSize);
-                ctx.fillRect(head.x*grid + 11.1, head.y*grid + 10.1, highlightSize, highlightSize);
+                ctx.fillRect(head.x*grid + 5.6, head.y*grid + 10.6, highlightSize, highlightSize);
+                ctx.fillRect(head.x*grid + 11.1, head.y*grid + 10.6, highlightSize, highlightSize);
             }
 
-            // Tongue - fixed for all directions (emerges cleanly from snout)
+            // Tongue - clean emergence from snout in all directions
             ctx.strokeStyle = '#ff2222';
             ctx.lineWidth = 2;
             ctx.lineCap = 'round';
