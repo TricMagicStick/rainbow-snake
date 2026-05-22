@@ -167,7 +167,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v12.9.3 - arc + bezier hybrid rounded head (reliable + matches body)</div>
+    <div id="debug">v13 - slithery tapered tail + rounded hybrid head</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -247,7 +247,7 @@
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             drawStars();
 
-            // Bezier curve smooth body
+            // Bezier body with slithery tapered tail
             ctx.lineJoin = 'round';
             ctx.lineCap = 'round';
 
@@ -263,8 +263,11 @@
                 const cx = (x1 + x2) / 2;
                 const cy = (y1 + y2) / 2;
 
+                // Taper line width toward the tail (slithery look)
+                const tailFactor = (snake.length - i) / snake.length;
+                ctx.lineWidth = (grid - 3) * (0.35 + tailFactor * 0.65);
+
                 ctx.strokeStyle = rainbowColors[i % rainbowColors.length];
-                ctx.lineWidth = grid - 3;
 
                 ctx.beginPath();
                 ctx.moveTo(x1, y1);
@@ -272,7 +275,7 @@
                 ctx.stroke();
             }
 
-            // New arc + bezier hybrid rounded head (reliable + matches body)
+            // Rounded hybrid head
             const head = snake[0];
             const cx = head.x * grid + grid / 2;
             const cy = head.y * grid + grid / 2;
@@ -282,21 +285,19 @@
             ctx.arc(cx, cy, grid / 2 - 1, 0, Math.PI * 2);
             ctx.fill();
 
-            // Gloss highlight layer (bezier + arc mix)
             ctx.fillStyle = 'rgba(255,255,255,0.38)';
             ctx.beginPath();
-            if (dx === 1) { // right
+            if (dx === 1) {
                 ctx.arc(cx + 2, cy - 2, grid / 3, 0, Math.PI * 2);
-            } else if (dx === -1) { // left
+            } else if (dx === -1) {
                 ctx.arc(cx - 2, cy - 2, grid / 3, 0, Math.PI * 2);
-            } else if (dy === -1) { // up
+            } else if (dy === -1) {
                 ctx.arc(cx, cy - 2, grid / 3, 0, Math.PI * 2);
-            } else { // down
+            } else {
                 ctx.arc(cx, cy + 2, grid / 3, 0, Math.PI * 2);
             }
             ctx.fill();
 
-            // Subtle outline
             ctx.strokeStyle = 'rgba(255,255,255,0.45)';
             ctx.lineWidth = 1.8;
             ctx.beginPath();
