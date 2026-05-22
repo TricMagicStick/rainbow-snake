@@ -19,29 +19,27 @@
         }
         h1 {
             margin: 0 0 2px;
-            font-size: 2.7em;
-            font-weight: 900;
-            letter-spacing: -2px;
+            font-size: 2.35em;
+            font-weight: 800;
+            letter-spacing: -1.2px;
             line-height: 1;
-            background: linear-gradient(90deg, #ff.0, #ff8800, #ffff00, #00ff00, #00ffff, #0088ff, #aa00ff, #ff00ff);
+            background: linear-gradient(90deg, #ff0000, #ff8800, #ffff00, #00ff00, #00ffff, #0088ff, #aa00ff, #ff00ff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-shadow: 
-                0 0 12px rgba(255,255,255,0.7),
-                0 0 24px rgba(255,0,255,0.6),
-                0 0 40px rgba(255,0,255,0.4),
-                0 0 60px rgba(255,0,255,0.25);
-            animation: rainbowShift 4s linear infinite;
+                0 0 8px rgba(255,255,255,0.5),
+                0 0 16px rgba(255,0,255,0.35);
+            animation: rainbowShift 4.5s linear infinite;
         }
         @keyframes rainbowShift {
             0% { background-position: 0% 50%; }
-            100% { background-position: 400% 50%; }
+            100% { background-position: 300% 50%; }
         }
         #score {
-            font-size: 1.1em;
+            font-size: 1.05em;
             margin-bottom: 4px;
-            color: #eeeeee;
-            text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+            color: #dddddd;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.4);
         }
         #debug {
             font-size: 9px;
@@ -52,7 +50,7 @@
         }
         #game-container {
             position: relative;
-            box-shadow: 0 0 45px #ff00ff, inset 0 0 0 1px #ffffff22;
+            box-shadow: 0 0 38px #ff00ff, inset 0 0 0 1px #ffffff22;
             border: 3px solid #ffffff33;
             border-radius: 18px;
             background: #000;
@@ -175,41 +173,41 @@
         .bottom-mural {
             margin-top: 14px;
             width: 100%;
-            max-width: 300px;
-            height: 42px;
+            max-width: 280px;
+            height: 38px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            opacity: 0.95;
+            gap: 7px;
+            opacity: 0.9;
         }
         .pixel-star {
-            width: 7px;
-            height: 7px;
+            width: 6px;
+            height: 6px;
             background: #ffffff;
-            box-shadow: 0 0 10px #ffffff, 0 0 18px #ff00ff;
-            animation: twinkle 1.4s infinite alternate;
+            box-shadow: 0 0 8px #ffffff;
+            animation: twinkle 1.6s infinite alternate;
         }
-        .pixel-star:nth-child(2) { animation-delay: 0.4s; }
-        .pixel-star:nth-child(3) { animation-delay: 0.9s; }
-        .pixel-star:nth-child(4) { animation-delay: 0.2s; }
-        .pixel-star:nth-child(5) { animation-delay: 0.7s; }
+        .pixel-star:nth-child(2) { animation-delay: 0.5s; }
+        .pixel-star:nth-child(3) { animation-delay: 1.0s; }
+        .pixel-star:nth-child(4) { animation-delay: 0.3s; }
+        .pixel-star:nth-child(5) { animation-delay: 0.8s; }
         @keyframes twinkle {
-            0% { opacity: 0.4; transform: scale(0.5); }
-            100% { opacity: 1; transform: scale(1.1); }
+            0% { opacity: 0.35; transform: scale(0.6); }
+            100% { opacity: 1; transform: scale(1); }
         }
         .mini-snake {
-            font-size: 16px;
-            letter-spacing: 2px;
-            opacity: 1;
-            text-shadow: 0 0 8px #ff00ff;
+            font-size: 15px;
+            letter-spacing: 1.5px;
+            opacity: 0.95;
+            text-shadow: 0 0 6px #ff00ff;
         }
     </style>
 </head>
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v13.8 - 10x more magnificent</div>
+    <div id="debug">v13.8.1 - fixed black screen + dialed back blur</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -230,7 +228,7 @@
         </div>
     </div>
 
-    <!-- Much more magnificent pixel art mural -->
+    <!-- Pixel art mural -->
     <div class="bottom-mural">
         <div class="pixel-star"></div>
         <div class="pixel-star"></div>
@@ -259,7 +257,7 @@
 
         document.getElementById('score').innerText = `Score: ${score} | High Score: ${highScore}`;
 
-        const rainbowColors = ['#00ff00', '#00ffff', '#0088ff, '#4400ff', '#aa00ff', '#ff00ff', '#ff0088', '#ff4400', '#ffaa00', '#ffff00'];
+        const rainbowColors = ['#00ff00', '#00ffff', '#0088ff', '#4400ff', '#aa00ff', '#ff00ff', '#ff0088', '#ff4400', '#ffaa00', '#ffff00'];
 
         function randomFood() {
             food = {
@@ -533,7 +531,7 @@
         function update() {
             if (gameOverFlag) return;
 
-            const head = {x: snake[0].x + dx, y: snake[0].y + dy];
+            const head = {x: snake[0].x + dx, y: snake[0].y + dy};
 
             if (head.x < 0 || head.x >= canvas.width/grid || head.y < 0 || head.y >= canvas.height/grid || snake.some(s => s.x === head.x && s.y === head.y)) {
                 gameOver();
