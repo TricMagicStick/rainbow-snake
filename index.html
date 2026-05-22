@@ -158,7 +158,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v11.4 - narrower head + fixed tongue position</div>
+    <div id="debug">v11.5 - narrower head + slower starting speed</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -191,7 +191,7 @@
         let score = 0;
         let highScore = localStorage.getItem('highScore') || 0;
         let gameInterval;
-        let speed = 180;
+        let speed = 220;
         let gameOverFlag = false;
         let tongueFrame = 0;
         let eatEffect = 0;
@@ -255,16 +255,16 @@
 
             if (dx === 1) { // right
                 ctx.beginPath();
-                ctx.roundRect(head.x * grid - 1, head.y * grid, grid + 1, grid, 5.5);
+                ctx.roundRect(head.x * grid, head.y * grid, grid, grid, 5);
                 ctx.fill();
                 ctx.stroke();
                 ctx.beginPath();
-                ctx.roundRect(head.x * grid + grid - 3, head.y * grid + 4, 5, grid - 8, 2.5);
+                ctx.roundRect(head.x * grid + grid - 2, head.y * grid + 4, 5, grid - 8, 2.5);
                 ctx.fill();
                 ctx.stroke();
             } else if (dx === -1) { // left
                 ctx.beginPath();
-                ctx.roundRect(head.x * grid, head.y * grid, grid + 1, grid, 5.5);
+                ctx.roundRect(head.x * grid, head.y * grid, grid, grid, 5);
                 ctx.fill();
                 ctx.stroke();
                 ctx.beginPath();
@@ -273,7 +273,7 @@
                 ctx.stroke();
             } else if (dy === -1) { // up
                 ctx.beginPath();
-                ctx.roundRect(head.x * grid, head.y * grid, grid, grid + 1, 5.5);
+                ctx.roundRect(head.x * grid, head.y * grid, grid, grid, 5);
                 ctx.fill();
                 ctx.stroke();
                 ctx.beginPath();
@@ -282,7 +282,7 @@
                 ctx.stroke();
             } else { // down
                 ctx.beginPath();
-                ctx.roundRect(head.x * grid, head.y * grid - 1, grid, grid + 1, 5.5);
+                ctx.roundRect(head.x * grid, head.y * grid, grid, grid, 5);
                 ctx.fill();
                 ctx.stroke();
                 ctx.beginPath();
@@ -321,7 +321,7 @@
                 ctx.fillRect(head.x*grid + 12.6, head.y*grid + 9.7, highlightSize, highlightSize);
             }
 
-            // Smol cute tongue - fixed clipping, starts outside head
+            // Smol cute tongue - fixed clipping
             ctx.strokeStyle = '#ff2222';
             ctx.lineWidth = 2;
             ctx.lineCap = 'round';
@@ -337,32 +337,32 @@
             ctx.beginPath();
             if (dx === 1) { // right
                 ctx.moveTo(hx + grid + 1, hy + grid/2);
-                ctx.lineTo(hx + grid + stemLen + 2, hy + grid/2 + flick * 0.45);
-                ctx.moveTo(hx + grid + stemLen + 2, hy + grid/2 + flick * 0.45);
-                ctx.lineTo(hx + grid + stemLen + forkLen + 2, hy + grid/2 + flick * 0.45 - spread);
-                ctx.moveTo(hx + grid + stemLen + 2, hy + grid/2 + flick * 0.45);
-                ctx.lineTo(hx + grid + stemLen + forkLen + 2, hy + grid/2 + flick * 0.45 + spread);
+                ctx.lineTo(hx + grid + stemLen + 1, hy + grid/2 + flick * 0.45);
+                ctx.moveTo(hx + grid + stemLen + 1, hy + grid/2 + flick * 0.45);
+                ctx.lineTo(hx + grid + stemLen + forkLen + 1, hy + grid/2 + flick * 0.45 - spread);
+                ctx.moveTo(hx + grid + stemLen + 1, hy + grid/2 + flick * 0.45);
+                ctx.lineTo(hx + grid + stemLen + forkLen + 1, hy + grid/2 + flick * 0.45 + spread);
             } else if (dx === -1) { // left
                 ctx.moveTo(hx - 1, hy + grid/2);
-                ctx.lineTo(hx - stemLen - 2, hy + grid/2 + flick * 0.45);
-                ctx.moveTo(hx - stemLen - 2, hy + grid/2 + flick * 0.45);
-                ctx.lineTo(hx - stemLen - forkLen - 2, hy + grid/2 + flick * 0.45 - spread);
-                ctx.moveTo(hx - stemLen - 2, hy + grid/2 + flick * 0.45);
-                ctx.lineTo(hx - stemLen - forkLen - 2, hy + grid/2 + flick * 0.45 + spread);
+                ctx.lineTo(hx - stemLen - 1, hy + grid/2 + flick * 0.45);
+                ctx.moveTo(hx - stemLen - 1, hy + grid/2 + flick * 0.45);
+                ctx.lineTo(hx - stemLen - forkLen - 1, hy + grid/2 + flick * 0.45 - spread);
+                ctx.moveTo(hx - stemLen - 1, hy + grid/2 + flick * 0.45);
+                ctx.lineTo(hx - stemLen - forkLen - 1, hy + grid/2 + flick * 0.45 + spread);
             } else if (dy === -1) { // up
                 ctx.moveTo(hx + grid/2, hy - 1);
-                ctx.lineTo(hx + grid/2 + flick * 0.35, hy - stemLen - 2);
-                ctx.moveTo(hx + grid/2 + flick * 0.35, hy - stemLen - 2);
-                ctx.lineTo(hx + grid/2 + flick * 0.35 - spread, hy - stemLen - forkLen - 2);
-                ctx.moveTo(hx + grid/2 + flick * 0.35, hy - stemLen - 2);
-                ctx.lineTo(hx + grid/2 + flick * 0.35 + spread, hy - stemLen - forkLen - 2);
+                ctx.lineTo(hx + grid/2 + flick * 0.35, hy - stemLen - 1);
+                ctx.moveTo(hx + grid/2 + flick * 0.35, hy - stemLen - 1);
+                ctx.lineTo(hx + grid/2 + flick * 0.35 - spread, hy - stemLen - forkLen - 1);
+                ctx.moveTo(hx + grid/2 + flick * 0.35, hy - stemLen - 1);
+                ctx.lineTo(hx + grid/2 + flick * 0.35 + spread, hy - stemLen - forkLen - 1);
             } else { // down
                 ctx.moveTo(hx + grid/2, hy + grid + 1);
-                ctx.lineTo(hx + grid/2 + flick * 0.35, hy + grid + stemLen + 2);
-                ctx.moveTo(hx + grid/2 + flick * 0.35, hy + grid + stemLen + 2);
-                ctx.lineTo(hx + grid/2 + flick * 0.35 - spread, hy + grid + stemLen + forkLen + 2);
-                ctx.moveTo(hx + grid/2 + flick * 0.35, hy + grid + stemLen + 2);
-                ctx.lineTo(hx + grid/2 + flick * 0.35 + spread, hy + grid + stemLen + forkLen + 2);
+                ctx.lineTo(hx + grid/2 + flick * 0.35, hy + grid + stemLen + 1);
+                ctx.moveTo(hx + grid/2 + flick * 0.35, hy + grid + stemLen + 1);
+                ctx.lineTo(hx + grid/2 + flick * 0.35 - spread, hy + grid + stemLen + forkLen + 1);
+                ctx.moveTo(hx + grid/2 + flick * 0.35, hy + grid + stemLen + 1);
+                ctx.lineTo(hx + grid/2 + flick * 0.35 + spread, hy + grid + stemLen + forkLen + 1);
             }
             ctx.stroke();
 
@@ -429,7 +429,8 @@
                 eatPoofY = head.y * grid + grid/2;
                 eatEffect = 14;
                 randomFood();
-                if (speed > 90) speed -= 3;
+                if (speed > 120) speed -= 2;
+                }
             } else {
                 snake.pop();
             }
@@ -453,7 +454,7 @@
             snake = [{x: 10, y: 10}];
             dx = 1; dy = 0;
             score = 0;
-            speed = 180;
+            speed = 220;
             gameOverFlag = false;
             eatEffect = 0;
             eatPoofX = 0;
