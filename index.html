@@ -167,7 +167,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v12.2 - cute flicking tongue + rainbow fabulous title</div>
+    <div id="debug">v12.3 - much more lively tongue flick animation</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -247,7 +247,7 @@
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             drawStars();
 
-            // Body segments with stronger subtle white outline for better definition
+            // Body segments
             for (let i = 1; i < snake.length; i++) {
                 ctx.fillStyle = rainbowColors[ i % rainbowColors.length ];
                 ctx.fillRect(snake[i].x * grid + 1, snake[i].y * grid + 1, grid - 2, grid - 2);
@@ -256,7 +256,7 @@
                 ctx.strokeRect(snake[i].x * grid + 1, snake[i].y * grid + 1, grid - 2, grid - 2);
             }
 
-            // Head - clean green block, same size as body
+            // Head - clean green block
             const head = snake[0];
             ctx.fillStyle = '#00ff00';
             ctx.fillRect(head.x * grid + 1, head.y * grid + 1, grid - 2, grid - 2);
@@ -294,52 +294,52 @@
                 ctx.fillRect(head.x*grid + 11.8, head.y*grid + 11.8, highlightSize, highlightSize);
             }
 
-            // Cute flicking tongue (stronger, more visible Y-fork)
+            // Much more lively, cute flicking tongue
             ctx.strokeStyle = '#ff2222';
-            ctx.lineWidth = 2.2;
+            ctx.lineWidth = 2.4;
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
-            tongueFrame += 0.65;
-            const flick = Math.sin(tongueFrame) * 2.2;
+            tongueFrame += 0.85;
+            const flick = Math.sin(tongueFrame) * 3.0;
             const hx = head.x * grid;
             const hy = head.y * grid;
-            const stemLen = 4.5;
-            const forkLen = 5.5;
-            const spread = 3.5;
+            const stemLen = 5;
+            const forkLen = 6;
+            const spread = 4.2;
 
             ctx.beginPath();
             if (dx === 1) { // right
                 ctx.moveTo(hx + grid - 1, hy + grid/2);
-                ctx.lineTo(hx + grid + stemLen, hy + grid/2 + flick * 0.35);
-                ctx.moveTo(hx + grid + stemLen, hy + grid/2 + flick * 0.35);
-                ctx.lineTo(hx + grid + stemLen + forkLen, hy + grid/2 + flick * 0.35 - spread);
-                ctx.moveTo(hx + grid + stemLen, hy + grid/2 + flick * 0.35);
-                ctx.lineTo(hx + grid + stemLen + forkLen, hy + grid/2 + flick * 0.35 + spread);
+                ctx.lineTo(hx + grid + stemLen, hy + grid/2 + flick * 0.32);
+                ctx.moveTo(hx + grid + stemLen, hy + grid/2 + flick * 0.32);
+                ctx.lineTo(hx + grid + stemLen + forkLen, hy + grid/2 + flick * 0.32 - spread);
+                ctx.moveTo(hx + grid + stemLen, hy + grid/2 + flick * 0.32);
+                ctx.lineTo(hx + grid + stemLen + forkLen, hy + grid/2 + flick * 0.32 + spread);
             } else if (dx === -1) { // left
                 ctx.moveTo(hx + 1, hy + grid/2);
-                ctx.lineTo(hx - stemLen, hy + grid/2 + flick * 0.35);
-                ctx.moveTo(hx - stemLen, hy + grid/2 + flick * 0.35);
-                ctx.lineTo(hx - stemLen - forkLen, hy + grid/2 + flick * 0.35 - spread);
-                ctx.moveTo(hx - stemLen, hy + grid/2 + flick * 0.35);
-                ctx.lineTo(hx - stemLen - forkLen, hy + grid/2 + flick * 0.35 + spread);
+                ctx.lineTo(hx - stemLen, hy + grid/2 + flick * 0.32);
+                ctx.moveTo(hx - stemLen, hy + grid/2 + flick * 0.32);
+                ctx.lineTo(hx - stemLen - forkLen, hy + grid/2 + flick * 0.32 - spread);
+                ctx.moveTo(hx - stemLen, hy + grid/2 + flick * 0.32);
+                ctx.lineTo(hx - stemLen - forkLen, hy + grid/2 + flick * 0.32 + spread);
             } else if (dy === -1) { // up
                 ctx.moveTo(hx + grid/2, hy + 1);
-                ctx.lineTo(hx + grid/2 + flick * 0.28, hy - stemLen);
-                ctx.moveTo(hx + grid/2 + flick * 0.28, hy - stemLen);
-                ctx.lineTo(hx + grid/2 + flick * 0.28 - spread, hy - stemLen - forkLen);
-                ctx.moveTo(hx + grid/2 + flick * 0.28, hy - stemLen);
-                ctx.lineTo(hx + grid/2 + flick * 0.28 + spread, hy - stemLen - forkLen);
+                ctx.lineTo(hx + grid/2 + flick * 0.26, hy - stemLen);
+                ctx.moveTo(hx + grid/2 + flick * 0.26, hy - stemLen);
+                ctx.lineTo(hx + grid/2 + flick * 0.26 - spread, hy - stemLen - forkLen);
+                ctx.moveTo(hx + grid/2 + flick * 0.26, hy - stemLen);
+                ctx.lineTo(hx + grid/2 + flick * 0.26 + spread, hy - stemLen - forkLen);
             } else { // down
                 ctx.moveTo(hx + grid/2, hy + grid - 1);
-                ctx.lineTo(hx + grid/2 + flick * 0.28, hy + grid + stemLen);
-                ctx.moveTo(hx + grid/2 + flick * 0.28, hy + grid + stemLen);
-                ctx.lineTo(hx + grid/2 + flick * 0.28 - spread, hy + grid + stemLen + forkLen);
-                ctx.moveTo(hx + grid/2 + flick * 0.28, hy + grid + stemLen);
-                ctx.lineTo(hx + grid/2 + flick * 0.28 + spread, hy + grid + stemLen + forkLen);
+                ctx.lineTo(hx + grid/2 + flick * 0.26, hy + grid + stemLen);
+                ctx.moveTo(hx + grid/2 + flick * 0.26, hy + grid + stemLen);
+                ctx.lineTo(hx + grid/2 + flick * 0.26 - spread, hy + grid + stemLen + forkLen);
+                ctx.moveTo(hx + grid/2 + flick * 0.26, hy + grid + stemLen);
+                ctx.lineTo(hx + grid/2 + flick * 0.26 + spread, hy + grid + stemLen + forkLen);
             }
             ctx.stroke();
 
-            // Poof + ring effects
+            // Poof + ring
             if (eatEffect > 0) {
                 ctx.save();
                 const t = eatEffect / 14;
@@ -368,7 +368,7 @@
                 eatEffect--;
             }
 
-            // Food with pulsing glow
+            // Food glow
             const pulse = Math.sin(Date.now() / 300) * 9.5 + 16;
             ctx.save();
             ctx.shadowColor = food.color || rainbowColors[snake.length % rainbowColors.length];
