@@ -167,7 +167,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v12.9.2 - temporary simple head to fix black screen on iOS</div>
+    <div id="debug">v12.9.3 - arc + bezier hybrid rounded head (reliable + matches body)</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -272,13 +272,36 @@
                 ctx.stroke();
             }
 
-            // TEMP: Simple head (no roundRect) to fix black screen on iOS
+            // New arc + bezier hybrid rounded head (reliable + matches body)
             const head = snake[0];
+            const cx = head.x * grid + grid / 2;
+            const cy = head.y * grid + grid / 2;
+
             ctx.fillStyle = '#00ff00';
-            ctx.fillRect(head.x * grid + 1, head.y * grid + 1, grid - 2, grid - 2);
+            ctx.beginPath();
+            ctx.arc(cx, cy, grid / 2 - 1, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Gloss highlight layer (bezier + arc mix)
+            ctx.fillStyle = 'rgba(255,255,255,0.38)';
+            ctx.beginPath();
+            if (dx === 1) { // right
+                ctx.arc(cx + 2, cy - 2, grid / 3, 0, Math.PI * 2);
+            } else if (dx === -1) { // left
+                ctx.arc(cx - 2, cy - 2, grid / 3, 0, Math.PI * 2);
+            } else if (dy === -1) { // up
+                ctx.arc(cx, cy - 2, grid / 3, 0, Math.PI * 2);
+            } else { // down
+                ctx.arc(cx, cy + 2, grid / 3, 0, Math.PI * 2);
+            }
+            ctx.fill();
+
+            // Subtle outline
             ctx.strokeStyle = 'rgba(255,255,255,0.45)';
-            ctx.lineWidth = 1.6;
-            ctx.strokeRect(head.x * grid + 1, head.y * grid + 1, grid - 2, grid - 2);
+            ctx.lineWidth = 1.8;
+            ctx.beginPath();
+            ctx.arc(cx, cy, grid / 2 - 1, 0, Math.PI * 2);
+            ctx.stroke();
 
             // Eyes
             ctx.fillStyle = '#111111';
