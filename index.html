@@ -158,7 +158,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v12 - clean green block head reset</div>
+    <div id="debug">v12.1 - head block size matched to body segments</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -247,13 +247,13 @@
                 ctx.strokeRect(snake[i].x * grid + 1, snake[i].y * grid + 1, grid - 2, grid - 2);
             }
 
-            // Head - clean green block (reset to simple)
+            // Head - clean green block, same size/offset as body segments
             const head = snake[0];
             ctx.fillStyle = '#00ff00';
-            ctx.fillRect(head.x * grid, head.y * grid, grid, grid);
+            ctx.fillRect(head.x * grid + 1, head.y * grid + 1, grid - 2, grid - 2);
             ctx.strokeStyle = 'rgba(255,255,255,0.45)';
             ctx.lineWidth = 1.8;
-            ctx.strokeRect(head.x * grid, head.y * grid, grid, grid);
+            ctx.strokeRect(head.x * grid + 1, head.y * grid + 1, grid - 2, grid - 2);
 
             // Simple eyes on the block head
             ctx.fillStyle = '#111111';
