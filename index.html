@@ -158,7 +158,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v11.7 - even smaller/narrower head</div>
+    <div id="debug">v11.8 - slender tapered snake head (narrower + proper snout)</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -247,7 +247,7 @@
                 ctx.strokeRect(snake[i].x * grid + 1, snake[i].y * grid + 1, grid - 2, grid - 2);
             }
 
-            // Head - even smaller/narrower overall
+            // Head - slender + tapered snout (narrower than body, proper snake shape)
             const head = snake[0];
             ctx.fillStyle = '#00ff00';
             ctx.strokeStyle = 'rgba(255,255,255,0.45)';
@@ -255,73 +255,74 @@
 
             if (dx === 1) { // right
                 ctx.beginPath();
-                ctx.roundRect(head.x * grid, head.y * grid, grid, grid, 4.5);
+                ctx.roundRect(head.x * grid + 2, head.y * grid + 2, grid - 4, grid - 4, 5);
                 ctx.fill();
                 ctx.stroke();
+                // tapered snout
                 ctx.beginPath();
-                ctx.roundRect(head.x * grid + grid - 1, head.y * grid + 5, 4, grid - 10, 2);
+                ctx.roundRect(head.x * grid + grid - 2, head.y * grid + 5, 6, grid - 10, 2.5);
                 ctx.fill();
                 ctx.stroke();
             } else if (dx === -1) { // left
                 ctx.beginPath();
-                ctx.roundRect(head.x * grid, head.y * grid, grid, grid, 4.5);
+                ctx.roundRect(head.x * grid + 2, head.y * grid + 2, grid - 4, grid - 4, 5);
                 ctx.fill();
                 ctx.stroke();
                 ctx.beginPath();
-                ctx.roundRect(head.x * grid - 1, head.y * grid + 5, 4, grid - 10, 2);
+                ctx.roundRect(head.x * grid - 4, head.y * grid + 5, 6, grid - 10, 2.5);
                 ctx.fill();
                 ctx.stroke();
             } else if (dy === -1) { // up
                 ctx.beginPath();
-                ctx.roundRect(head.x * grid, head.y * grid, grid, grid, 4.5);
+                ctx.roundRect(head.x * grid + 2, head.y * grid + 2, grid - 4, grid - 4, 5);
                 ctx.fill();
                 ctx.stroke();
                 ctx.beginPath();
-                ctx.roundRect(head.x * grid + 5, head.y * grid - 1, grid - 10, 4, 2);
+                ctx.roundRect(head.x * grid + 5, head.y * grid - 4, grid - 10, 6, 2.5);
                 ctx.fill();
                 ctx.stroke();
             } else { // down
                 ctx.beginPath();
-                ctx.roundRect(head.x * grid, head.y * grid, grid, grid, 4.5);
+                ctx.roundRect(head.x * grid + 2, head.y * grid + 2, grid - 4, grid - 4, 5);
                 ctx.fill();
                 ctx.stroke();
                 ctx.beginPath();
-                ctx.roundRect(head.x * grid + 5, head.y * grid + grid - 1, grid - 10, 4, 2);
+                ctx.roundRect(head.x * grid + 5, head.y * grid + grid - 4, grid - 10, 6, 2.5);
                 ctx.fill();
                 ctx.stroke();
             }
 
-            // Eyes - adjusted for smaller head
+            // Eyes - positioned for slender tapered head
             ctx.fillStyle = '#111111';
-            const eyeSize = 4;
-            const highlightSize = 1.4;
+            const eyeSize = 3.8;
+            const highlightSize = 1.3;
             if (dx === 1) { // right
-                ctx.fillRect(head.x*grid + 7, head.y*grid + 5.5, eyeSize, eyeSize);
-                ctx.fillRect(head.x*grid + 7, head.y*grid + 11.5, eyeSize, eyeSize);
+                ctx.fillRect(head.x*grid + 6, head.y*grid + 5.5, eyeSize, eyeSize);
+                ctx.fillRect(head.x*grid + 6, head.y*grid + 11, eyeSize, eyeSize);
                 ctx.fillStyle = '#ffffff';
-                ctx.fillRect(head.x*grid + 7.6, head.y*grid + 6, highlightSize, highlightSize);
-                ctx.fillRect(head.x*grid + 7.6, head.y*grid + 12, highlightSize, highlightSize);
+                ctx.fillRect(head.x*grid + 6.6, head.y*grid + 6, highlightSize, highlightSize);
+                ctx.fillRect(head.x*grid + 6.6, head.y*grid + 11.5, highlightSize, highlightSize);
             } else if (dx === -1) { // left
-                ctx.fillRect(head.x*grid + 9, head.y*grid + 5.5, eyeSize, eyeSize);
-                ctx.fillRect(head.x*grid + 9, head.y*grid + 11.5, eyeSize, eyeSize);
+                ctx.fillRect(head.x*grid + 10, head.y*grid + 5.5, eyeSize, eyeSize);
+                ctx.fillRect(head.x*grid + 10, head.y*grid + 11, eyeSize, eyeSize);
                 ctx.fillStyle = '#ffffff';
-                ctx.fillRect(head.x*grid + 9.6, head.y*grid + 6, highlightSize, highlightSize);
-                ctx.fillRect(head.x*grid + 9.6, head.y*grid + 12, highlightSize, highlightSize);
+                ctx.fillRect(head.x*grid + 10.6, head.y*grid + 6, highlightSize, highlightSize);
+                ctx.fillRect(head.x*grid + 10.6, head.y*grid + 11.5, highlightSize, highlightSize);
             } else if (dy === -1) { // up
                 ctx.fillRect(head.x*grid + 5.5, head.y*grid + 7, eyeSize, eyeSize);
-                ctx.fillRect(head.x*grid + 11.5, head.y*grid + 7, eyeSize, eyeSize);
+                ctx.fillRect(head.x*grid + 11, head.y*grid + 7, eyeSize, eyeSize);
                 ctx.fillStyle = '#ffffff';
                 ctx.fillRect(head.x*grid + 6, head.y*grid + 7.6, highlightSize, highlightSize);
-                ctx.fillRect(head.x*grid + 12, head.y*grid + 7.6, highlightSize, highlightSize);
+                ctx.fillRect(head.x*grid + 11.5, head.y*grid + 7.6, highlightSize, highlightSize);
             } else { // down
-                ctx.fillRect(head.x*grid + 5.5, head.y*grid + 9, eyeSize, eyeSize);
-                ctx.fillRect(head.x*grid + 11.5, head.y*grid + 9, eyeSize, eyeSize);
+                ctx.fillRect(head.x*grid + 5.5, head.y*grid + 9.5, eyeSize, eyeSize);
+                ctx.fillRect(head.x*grid + 11, head.y*grid + 9.5, eyeSize, eyeSize);
                 ctx.fillStyle = '#ffffff';
-                ctx.fillRect(head.x*grid + 6, head.y*grid + 9.6, highlightSize, highlightSize);
-                ctx.fillRect(head.x*grid + 12, head.y*grid + 9.6, highlightSize, highlightSize);
+                ctx.fillRect(head.x*grid + 6, head.y*grid + 10.1, highlightSize, highlightSize);
+                ctx.fillRect(head.x*grid + 11.5, head.y*grid + 10.1, highlightSize, highlightSize);
             }
 
-            // Smol cute tongue - fixed clipping
+            // Smol cute tongue - attached to snout
             ctx.strokeStyle = '#ff2222';
             ctx.lineWidth = 2;
             ctx.lineCap = 'round';
@@ -336,21 +337,21 @@
 
             ctx.beginPath();
             if (dx === 1) { // right
-                ctx.moveTo(hx + grid + 1, hy + grid/2);
-                ctx.lineTo(hx + grid + stemLen + 1, hy + grid/2 + flick * 0.45);
-                ctx.moveTo(hx + grid + stemLen + 1, hy + grid/2 + flick * 0.45);
-                ctx.lineTo(hx + grid + stemLen + forkLen + 1, hy + grid/2 + flick * 0.45 - spread);
-                ctx.moveTo(hx + grid + stemLen + 1, hy + grid/2 + flick * 0.45);
-                ctx.lineTo(hx + grid + stemLen + forkLen + 1, hy + grid/2 + flick * 0.45 + spread);
+                ctx.moveTo(hx + grid + 2, hy + grid/2);
+                ctx.lineTo(hx + grid + stemLen + 3, hy + grid/2 + flick * 0.45);
+                ctx.moveTo(hx + grid + stemLen + 3, hy + grid/2 + flick * 0.45);
+                ctx.lineTo(hx + grid + stemLen + forkLen + 3, hy + grid/2 + flick * 0.45 - spread);
+                ctx.moveTo(hx + grid + stemLen + 3, hy + grid/2 + flick * 0.45);
+                ctx.lineTo(hx + grid + stemLen + forkLen + 3, hy + grid/2 + flick * 0.45 + spread);
             } else if (dx === -1) { // left
-                ctx.moveTo(hx - 1, hy + grid/2);
+                ctx.moveTo(hx + 1, hy + grid/2);
                 ctx.lineTo(hx - stemLen - 1, hy + grid/2 + flick * 0.45);
                 ctx.moveTo(hx - stemLen - 1, hy + grid/2 + flick * 0.45);
                 ctx.lineTo(hx - stemLen - forkLen - 1, hy + grid/2 + flick * 0.45 - spread);
                 ctx.moveTo(hx - stemLen - 1, hy + grid/2 + flick * 0.45);
                 ctx.lineTo(hx - stemLen - forkLen - 1, hy + grid/2 + flick * 0.45 + spread);
             } else if (dy === -1) { // up
-                ctx.moveTo(hx + grid/2, hy - 1);
+                ctx.moveTo(hx + grid/2, hy + 1);
                 ctx.lineTo(hx + grid/2 + flick * 0.35, hy - stemLen - 1);
                 ctx.moveTo(hx + grid/2 + flick * 0.35, hy - stemLen - 1);
                 ctx.lineTo(hx + grid/2 + flick * 0.35 - spread, hy - stemLen - forkLen - 1);
@@ -358,11 +359,11 @@
                 ctx.lineTo(hx + grid/2 + flick * 0.35 + spread, hy - stemLen - forkLen - 1);
             } else { // down
                 ctx.moveTo(hx + grid/2, hy + grid + 1);
-                ctx.lineTo(hx + grid/2 + flick * 0.35, hy + grid + stemLen + 1);
-                ctx.moveTo(hx + grid/2 + flick * 0.35, hy + grid + stemLen + 1);
-                ctx.lineTo(hx + grid/2 + flick * 0.35 - spread, hy + grid + stemLen + forkLen + 1);
-                ctx.moveTo(hx + grid/2 + flick * 0.35, hy + grid + stemLen + 1);
-                ctx.lineTo(hx + grid/2 + flick * 0.35 + spread, hy + grid + stemLen + forkLen + 1);
+                ctx.lineTo(hx + grid/2 + flick * 0.35, hy + grid + stemLen + 2);
+                ctx.moveTo(hx + grid/2 + flick * 0.35, hy + grid + stemLen + 2);
+                ctx.lineTo(hx + grid/2 + flick * 0.35 - spread, hy + grid + stemLen + forkLen + 2);
+                ctx.moveTo(hx + grid/2 + flick * 0.35, hy + grid + stemLen + 2);
+                ctx.lineTo(hx + grid/2 + flick * 0.35 + spread, hy + grid + stemLen + forkLen + 2);
             }
             ctx.stroke();
 
