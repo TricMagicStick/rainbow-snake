@@ -158,7 +158,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v11.9.1 - head size increased + eyes further forward + tongue fixed</div>
+    <div id="debug">v11.9.2 - tongue fixed for left and up directions</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -321,7 +321,7 @@
                 ctx.fillRect(head.x*grid + 11.1, head.y*grid + 10.1, highlightSize, highlightSize);
             }
 
-            // Tongue - emerges cleanly from front of snout (no clipping)
+            // Tongue - fixed for all directions (emerges cleanly from snout)
             ctx.strokeStyle = '#ff2222';
             ctx.lineWidth = 2;
             ctx.lineCap = 'round';
@@ -344,20 +344,20 @@
                 ctx.lineTo(hx + grid + stemLen + forkLen + 5, hy + grid/2 + flick * 0.45 + spread);
             } else if (dx === -1) { // left
                 ctx.moveTo(hx + 1, hy + grid/2);
-                ctx.lineTo(hx - stemLen, hy + grid/2 + flick * 0.45);
-                ctx.moveTo(hx - stemLen, hy + grid/2 + flick * 0.45);
-                ctx.lineTo(hx - stemLen - forkLen, hy + grid/2 + flick * 0.45 - spread);
-                ctx.moveTo(hx - stemLen, hy + grid/2 + flick * 0.45);
-                ctx.lineTo(hx - stemLen - forkLen, hy + grid/2 + flick * 0.45 + spread);
+                ctx.lineTo(hx - stemLen - 1, hy + grid/2 + flick * 0.45);
+                ctx.moveTo(hx - stemLen - 1, hy + grid/2 + flick * 0.45);
+                ctx.lineTo(hx - stemLen - forkLen - 1, hy + grid/2 + flick * 0.45 - spread);
+                ctx.moveTo(hx - stemLen - 1, hy + grid/2 + flick * 0.45);
+                ctx.lineTo(hx - stemLen - forkLen - 1, hy + grid/2 + flick * 0.45 + spread);
             } else if (dy === -1) { // up
-                ctx.moveTo(hx + grid/2, hy + 1);
-                ctx.lineTo(hx + grid/2 + flick * 0.35, hy - stemLen);
-                ctx.moveTo(hx + grid/2 + flick * 0.35, hy - stemLen);
-                ctx.lineTo(hx + grid/2 + flick * 0.35 - spread, hy - stemLen - forkLen);
-                ctx.moveTo(hx + grid/2 + flick * 0.35, hy - stemLen);
-                ctx.lineTo(hx + grid/2 + flick * 0.35 + spread, hy - stemLen - forkLen);
+                ctx.moveTo(hx + grid/2, hy + 2);
+                ctx.lineTo(hx + grid/2 + flick * 0.35, hy - stemLen - 1);
+                ctx.moveTo(hx + grid/2 + flick * 0.35, hy - stemLen - 1);
+                ctx.lineTo(hx + grid/2 + flick * 0.35 - spread, hy - stemLen - forkLen - 1);
+                ctx.moveTo(hx + grid/2 + flick * 0.35, hy - stemLen - 1);
+                ctx.lineTo(hx + grid/2 + flick * 0.35 + spread, hy - stemLen - forkLen - 1);
             } else { // down
-                ctx.moveTo(hx + grid/2, hy + grid + 1);
+                ctx.moveTo(hx + grid/2, hy + grid + 2);
                 ctx.lineTo(hx + grid/2 + flick * 0.35, hy + grid + stemLen + 2);
                 ctx.moveTo(hx + grid/2 + flick * 0.35, hy + grid + stemLen + 2);
                 ctx.lineTo(hx + grid/2 + flick * 0.35 - spread, hy + grid + stemLen + forkLen + 2);
