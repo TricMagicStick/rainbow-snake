@@ -167,7 +167,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v12.7 - glossy shiny body segments</div>
+    <div id="debug">v12.7.1 - smoother, less blocky look (softened gloss + rounded feel)</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -247,37 +247,34 @@
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             drawStars();
 
-            // Body segments with glossy shine
+            // Body segments - smoother glossy look
             for (let i = 1; i < snake.length; i++) {
                 const bx = snake[i].x * grid + 1;
                 const by = snake[i].y * grid + 1;
                 const bcol = rainbowColors[i % rainbowColors.length];
 
-                // Base color
                 ctx.fillStyle = bcol;
                 ctx.fillRect(bx, by, grid - 2, grid - 2);
 
-                // Glossy highlight (top-left shine)
-                ctx.fillStyle = 'rgba(255,255,255,0.45)';
-                ctx.fillRect(bx, by, grid - 3, 5);
-                ctx.fillRect(bx, by, 5, grid - 3);
+                // Softer glossy highlight (less harsh, more blended)
+                ctx.fillStyle = 'rgba(255,255,255,0.32)';
+                ctx.fillRect(bx, by, grid - 3, 4);
+                ctx.fillRect(bx, by, 4, grid - 3);
 
-                // Subtle edge highlight for extra gloss
-                ctx.fillStyle = 'rgba(255,255,255,0.25)';
+                ctx.fillStyle = 'rgba(255,255,255,0.18)';
                 ctx.fillRect(bx + 1, by + 1, grid - 4, 2);
 
-                // Outline
-                ctx.strokeStyle = 'rgba(255,255,255,0.38)';
+                ctx.strokeStyle = 'rgba(255,255,255,0.32)';
                 ctx.lineWidth = 1.2;
                 ctx.strokeRect(bx, by, grid - 2, grid - 2);
             }
 
-            // Head - clean green block
+            // Head - slightly softer block
             const head = snake[0];
             ctx.fillStyle = '#00ff00';
             ctx.fillRect(head.x * grid + 1, head.y * grid + 1, grid - 2, grid - 2);
-            ctx.strokeStyle = 'rgba(255,255,255,0.45)';
-            ctx.lineWidth = 1.8;
+            ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+            ctx.lineWidth = 1.6;
             ctx.strokeRect(head.x * grid + 1, head.y * grid + 1, grid - 2, grid - 2);
 
             // Eyes
@@ -377,7 +374,7 @@
             }
             ctx.stroke();
 
-            // Pixel art food (shiny orb)
+            // Pixel art food
             const fx = food.x * grid + grid/2;
             const fy = food.y * grid + grid/2;
             const fcol = food.color || '#ff00ff';
