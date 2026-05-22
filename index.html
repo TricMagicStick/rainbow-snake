@@ -167,7 +167,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v12.5 - slightly longer + more pronounced Y-shaped tongue</div>
+    <div id="debug">v12.6 - pixel art food (cute glowing orb style)</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -294,7 +294,7 @@
                 ctx.fillRect(head.x*grid + 11.8, head.y*grid + 11.8, highlightSize, highlightSize);
             }
 
-            // Phase-based quick-flick tongue - slightly longer + more Y-shaped
+            // Phase-based quick-flick tongue
             ctx.strokeStyle = '#ff2222';
             ctx.lineWidth = 2;
             ctx.lineCap = 'round';
@@ -361,7 +361,36 @@
             }
             ctx.stroke();
 
-            // Poof + ring
+            // NEW: Cute pixel art food (small glowing orb style)
+            const fx = food.x * grid + grid/2;
+            const fy = food.y * grid + grid/2;
+            const fcol = food.color || '#ff00ff';
+
+            // Soft glow behind
+            ctx.save();
+            ctx.shadowColor = fcol;
+            ctx.shadowBlur = 14;
+            ctx.fillStyle = fcol;
+            ctx.beginPath();
+            ctx.arc(fx, fy, 7, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+
+            // Pixel orb core (simple cute  pixel style)
+            ctx.fillStyle = fcol;
+            ctx.fillRect(fx - 4, fy - 4, 8, 8);
+
+            // Highlight pixels for cute shine
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(fx - 3, fy - 3, 3, 3);
+            ctx.fillRect(fx + 1, fy + 1, 2, 2);
+
+            // Tiny dark outline pixels for definition
+            ctx.fillStyle = 'rgba(0,0,0,0.35)';
+            ctx.fillRect(fx - 4, fy + 3, 2, 1);
+            ctx.fillRect(fx + 3, fy - 4, 1, 2);
+
+            // Poof + ring effects
             if (eatEffect > 0) {
                 ctx.save();
                 const t = eatEffect / 14;
@@ -389,17 +418,6 @@
 
                 eatEffect--;
             }
-
-            // Food glow
-            const pulse = Math.sin(Date.now() / 300) * 9.5 + 16;
-            ctx.save();
-            ctx.shadowColor = food.color || rainbowColors[snake.length % rainbowColors.length];
-            ctx.shadowBlur = pulse;
-            ctx.fillStyle = food.color || rainbowColors[snake.length % rainbowColors.length];
-            ctx.beginPath();
-            ctx.arc(food.x * grid + grid/2, food.y * grid + grid/2, 6.5, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.restore();
         }
 
         function update() {
