@@ -18,34 +18,35 @@
             touch-action: manipulation;
         }
         h1 {
-            margin: 0 0 4px;
-            font-size: 2.25em;
-            font-weight: 800;
-            letter-spacing: -1px;
+            margin: 0 0 2px;
+            font-size: 2.45em;
+            font-weight: 900;
+            letter-spacing: -1.5px;
             line-height: 1;
             background: linear-gradient(90deg, #ff0000, #ff8800, #ffff00, #00ff00, #00ffff, #0088ff, #aa00ff, #ff00ff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-shadow: 
-                0 0 10px rgba(255,255,255,0.4),
-                0 0 20px rgba(255,0,255,0.3);
-            animation: rainbowShift 5s linear infinite;
+                0 0 8px rgba(255,255,255,0.5),
+                0 0 16px rgba(255,0,255,0.4),
+                0 0 28px rgba(255,0,255,0.25);
+            animation: rainbowShift 4.5s linear infinite;
         }
         @keyframes rainbowShift {
             0% { background-position: 0% 50%; }
-            100% { background-position: 300% 50%; }
+            100% { background-position: 400% 50%; }
         }
         #score {
             font-size: 1.05em;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
             color: #dddddd;
             text-shadow: 0 1px 3px rgba(0,0,0,0.4);
         }
         #debug {
-            font-size: 10px;
-            opacity: 0.5;
-            margin-top: 18px;
-            color: #aaa;
+            font-size: 9px;
+            opacity: 0.35;
+            margin-top: 4px;
+            color: #888;
             text-align: center;
         }
         #game-container {
@@ -87,7 +88,7 @@
             background: #0066cc;
         }
         .controls {
-            margin-top: 20px;
+            margin-top: 18px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -170,19 +171,43 @@
             transform: scale(0.96);
             background: #330033;
         }
-        .bottom-area {
-            margin-top: 22px;
+        .bottom-mural {
+            margin-top: 16px;
+            width: 100%;
+            max-width: 280px;
+            height: 38px;
             display: flex;
-            flex-direction: column;
             align-items: center;
+            justify-content: center;
             gap: 6px;
+            opacity: 0.85;
+        }
+        .pixel-star {
+            width: 5px;
+            height: 5px;
+            background: #ffffff;
+            box-shadow: 0 0 6px #ffffff;
+            animation: twinkle 1.8s infinite alternate;
+        }
+        .pixel-star:nth-child(2) { animation-delay: 0.6s; }
+        .pixel-star:nth-child(3) { animation-delay: 1.2s; }
+        .pixel-star:nth-child(4) { animation-delay: 0.3s; }
+        .pixel-star:nth-child(5) { animation-delay: 0.9s; }
+        @keyframes twinkle {
+            0% { opacity: 0.3; transform: scale(0.6); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        .mini-snake {
+            font-size: 13px;
+            letter-spacing: 1px;
+            opacity: 0.9;
         }
     </style>
 </head>
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v13.6 - stylized title + filled bottom space</div>
+    <div id="debug">v13.7 - magnificent pixel mural + fantastic title</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -203,8 +228,13 @@
         </div>
     </div>
 
-    <div class="bottom-area">
-        <div id="debug">v13.6</div>
+    <!-- Pixel art mural area -->
+    <div class="bottom-mural">
+        <div class="pixel-star"></div>
+        <div class="pixel-star"></div>
+        <span class="mini-snake">~🌈~</span>
+        <div class="pixel-star"></div>
+        <div class="pixel-star"></div>
     </div>
 
     <script>
