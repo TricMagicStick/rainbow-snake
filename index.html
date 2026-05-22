@@ -173,32 +173,33 @@
             background: #330033;
         }
         .bottom-creative {
-            margin-top: 18px;
+            margin-top: 16px;
             width: 100%;
-            max-width: 280px;
-            height: 42px;
+            max-width: 300px;
+            height: 56px;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 12px;
-            opacity: 0.7;
+            gap: 6px;
+            opacity: 0.85;
         }
         .elegant-line {
-            height: 1px;
-            background: linear-gradient(to right, transparent, #ffffff44, transparent);
+            height: 1.5px;
+            background: linear-gradient(to right, transparent, #ffffff55, transparent);
             width: 100%;
-            max-width: 220px;
+            max-width: 260px;
         }
         .elegant-line.thin {
-            height: 0.5px;
-            background: linear-gradient(to right, transparent, #ffffff33, transparent);
+            height: 1px;
+            background: linear-gradient(to right, transparent, #ffffff44, transparent);
         }
     </style>
 </head>
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v14.6.1 - elegant linework bottom</div>
+    <div id="debug">v14.6.11 - improved elegant linework</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -219,11 +220,12 @@
         </div>
     </div>
 
-    <!-- Elegant Linework Bottom -->
+    <!-- Improved Elegant Linework Bottom -->
     <div class="bottom-creative">
         <div class="elegant-line thin"></div>
         <div class="elegant-line"></div>
         <div class="elegant-line thin"></div>
+        <div class="elegant-line"></div>
     </div>
 
     <script>
