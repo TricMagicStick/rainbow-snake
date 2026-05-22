@@ -19,16 +19,16 @@
         }
         h1 {
             margin: 0 0 4px;
-            font-size: 2.35em;
-            font-weight: 800;
-            letter-spacing: -1.2px;
+            font-size: 2.25em;
+            font-weight: 700;
+            letter-spacing: -1px;
             line-height: 1;
             background: linear-gradient(90deg, #ff0000, #ff8800, #ffff00, #00ff00, #00ffff, #0088ff, #aa00ff, #ff00ff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-shadow: 
-                0 0 8px rgba(255,255,255,0.5),
-                0 0 16px rgba(255,0,255,0.35);
+                0 0 6px rgba(255,255,255,0.45),
+                0 0 12px rgba(255,0,255,0.3);
             animation: rainbowShift 4.5s linear infinite;
         }
         @keyframes rainbowShift {
@@ -37,8 +37,8 @@
         }
         #score {
             font-size: 1.05em;
-            margin-bottom: 8px;
-            color: #dddddd;
+            margin-bottom: 10px;
+            color: #cccccc;
             text-shadow: 0 1px 3px rgba(0,0,0,0.4);
         }
         #debug {
@@ -176,7 +176,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v14.0 - foundation cleanup (mural removed)</div>
+    <div id="debug">v14.1 - title & header refinement</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
