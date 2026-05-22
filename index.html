@@ -167,7 +167,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v12.7.1 - smoother, less blocky look (softened gloss + rounded feel)</div>
+    <div id="debug">v12.7.2 - rounded body segments for smoother look (kept strong outline contrast)</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -247,33 +247,40 @@
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             drawStars();
 
-            // Body segments - smoother glossy look
+            // Body segments - rounded + glossy with strong outline contrast
             for (let i = 1; i < snake.length; i++) {
                 const bx = snake[i].x * grid + 1;
                 const by = snake[i].y * grid + 1;
                 const bcol = rainbowColors[i % rainbowColors.length];
 
+                // Rounded body segment
                 ctx.fillStyle = bcol;
-                ctx.fillRect(bx, by, grid - 2, grid - 2);
+                ctx.beginPath();
+                ctx.roundRect(bx, by, grid - 2, grid - 2, 3);
+                ctx.fill();
 
-                // Softer glossy highlight (less harsh, more blended)
-                ctx.fillStyle = 'rgba(255,255,255,0.32)';
-                ctx.fillRect(bx, by, grid - 3, 4);
-                ctx.fillRect(bx, by, 4, grid - 3);
+                // Glossy highlight on rounded shape
+                ctx.fillStyle = 'rgba(255,255,255,0.38)';
+                ctx.beginPath();
+                ctx.roundRect(bx, by, grid - 2, 4, 2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.roundRect(bx, by, 4, grid - 2, 2);
+                ctx.fill();
 
-                ctx.fillStyle = 'rgba(255,255,255,0.18)';
-                ctx.fillRect(bx + 1, by + 1, grid - 4, 2);
-
-                ctx.strokeStyle = 'rgba(255,255,255,0.32)';
-                ctx.lineWidth = 1.2;
-                ctx.strokeRect(bx, by, grid - 2, grid - 2);
+                // Strong outline contrast (user liked this)
+                ctx.strokeStyle = 'rgba(255,255,255,0.42)';
+                ctx.lineWidth = 1.4;
+                ctx.beginPath();
+                ctx.roundRect(bx, by, grid - 2, grid - 2, 3);
+                ctx.stroke();
             }
 
-            // Head - slightly softer block
+            // Head - clean green block (kept mostly square as preferred)
             const head = snake[0];
             ctx.fillStyle = '#00ff00';
             ctx.fillRect(head.x * grid + 1, head.y * grid + 1, grid - 2, grid - 2);
-            ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+            ctx.strokeStyle = 'rgba(255,255,255,0.45)';
             ctx.lineWidth = 1.6;
             ctx.strokeRect(head.x * grid + 1, head.y * grid + 1, grid - 2, grid - 2);
 
