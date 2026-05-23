@@ -156,7 +156,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v15.9.3 - per-segment colors (new colors only added at tail end)</div>
+    <div id="debug">v15.9.4 - per-segment colors fixed (no more flashing red)</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -195,7 +195,7 @@
         let eatEffects = [];
         let stars = [];
         let frameCount = 0;
-        let nextTailHue = 170; // starting hue for first tail segment after green head
+        let nextTailHue = 170;
 
         const scoreEl = document.getElementById('score');
         const debugEl = document.getElementById('debug');
@@ -274,6 +274,7 @@
                 }
                 ctx.lineWidth = GRID * taperFactor;
 
+                // Use the stored per-segment hue (this was the bug before)
                 ctx.strokeStyle = `hsl(${seg.hue}, 92%, 58%)`;
 
                 ctx.beginPath();
@@ -390,7 +391,6 @@
             const fy = food.y * GRID + GRID / 2;
             const r = GRID * 0.38;
 
-            // Food predicts the hue that will be assigned to the new tail segment
             const foodHue = nextTailHue;
             ctx.fillStyle = `hsl(${foodHue}, 92%, 65%)`;
 
@@ -462,7 +462,6 @@
                 score++;
                 updateScoreDisplay();
 
-                // Add new segment at tail end with the next color in sequence
                 const newHue = getNextTailHue();
                 const currentTail = snake[snake.length - 1];
                 snake.push({ x: currentTail.x, y: currentTail.y, hue: newHue });
@@ -525,8 +524,8 @@
         function startGame() {
             nextTailHue = 170;
             snake = [
-                { x: 8, y: 10, hue: 120 }, // head (green, not used for body drawing)
-                { x: 7, y: 10, hue: getNextTailHue() } // first tail segment
+                { x: 8, y: 10, hue: 120 },
+                { x: 7, y: 10, hue: getNextTailHue() }
             ];
             dx = 1;
             dy = 0;
@@ -582,7 +581,7 @@
             initStars();
             setupControls();
             updateScoreDisplay();
-            debugEl.innerText = 'v15.9.3 - per-segment colors (new colors only added at tail end)';
+            debugEl.innerText = 'v15.9.4 - per-segment colors fixed (no more flashing red)';
             startGame();
             gameLoop();
         }
