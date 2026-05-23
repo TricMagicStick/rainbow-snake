@@ -156,7 +156,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v15.0 - stable foundation</div>
+    <div id="debug">v15.1 - head seated, cute Y tongue, refined eyes</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -175,7 +175,6 @@
             <button id="down" aria-label="Down">↓</button>
             <button id="right" aria-label="Right">→</button>
         </div>
-    </div>
 
     <script>
         const canvas = document.getElementById('game');
@@ -273,9 +272,14 @@
             const hy = head.y * GRID + GRID / 2;
             const angle = Math.atan2(dy, dx);
 
+            // Slight forward offset so head sits naturally on the body (fixes floating appearance)
+            const forwardOffset = 2.8;
+            const hdx = hx + Math.cos(angle) * forwardOffset;
+            const hdy = hy + Math.sin(angle) * forwardOffset;
+
             // Head shadow
             ctx.save();
-            ctx.translate(hx, hy);
+            ctx.translate(hdx, hdy);
             ctx.rotate(angle);
             ctx.fillStyle = 'rgba(0, 0, 0, 0.28)';
             ctx.beginPath();
@@ -298,71 +302,66 @@
             ctx.fill();
             ctx.restore();
 
-            // Eyes (positioned relative to facing direction)
-            const eyeDist = GRID * 0.19;
-            const eyeFwd = GRID * 0.12;
+            // Eyes - small dark cute eyes with bright highlight only (no large white sclera)
+            const eyeDist = GRID * 0.175;
+            const eyeFwd = GRID * 0.10;
             const eyePerp = Math.PI / 2;
-            const leftEyeX = hx + Math.cos(angle) * eyeFwd + Math.cos(angle + eyePerp) * eyeDist;
-            const leftEyeY = hy + Math.sin(angle) * eyeFwd + Math.sin(angle + eyePerp) * eyeDist;
-            const rightEyeX = hx + Math.cos(angle) * eyeFwd - Math.cos(angle + eyePerp) * eyeDist;
-            const rightEyeY = hy + Math.sin(angle) * eyeFwd - Math.sin(angle + eyePerp) * eyeDist;
+            const leftEyeX = hdx + Math.cos(angle) * eyeFwd + Math.cos(angle + eyePerp) * eyeDist;
+            const leftEyeY = hdy + Math.sin(angle) * eyeFwd + Math.sin(angle + eyePerp) * eyeDist;
+            const rightEyeX = hdx + Math.cos(angle) * eyeFwd - Math.cos(angle + eyePerp) * eyeDist;
+            const rightEyeY = hdy + Math.sin(angle) * eyeFwd - Math.sin(angle + eyePerp) * eyeDist;
 
-            // Eye whites
-            ctx.fillStyle = '#ffffff';
-            ctx.beginPath();
-            ctx.arc(leftEyeX, leftEyeY, GRID * 0.125, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.beginPath();
-            ctx.arc(rightEyeX, rightEyeY, GRID * 0.125, 0, Math.PI * 2);
-            ctx.fill();
+            const eyeRadius = GRID * 0.085;
 
-            // Pupils (slightly forward)
-            const pupilFwd = GRID * 0.045;
-            ctx.fillStyle = '#111111';
+            // Dark eye base directly on head (cute snake style)
+            ctx.fillStyle = '#0d1f0d';
             ctx.beginPath();
-            ctx.arc(leftEyeX + Math.cos(angle) * pupilFwd, leftEyeY + Math.sin(angle) * pupilFwd, GRID * 0.055, 0, Math.PI * 2);
+            ctx.arc(leftEyeX, leftEyeY, eyeRadius, 0, Math.PI * 2);
             ctx.fill();
             ctx.beginPath();
-            ctx.arc(rightEyeX + Math.cos(angle) * pupilFwd, rightEyeY + Math.sin(angle) * pupilFwd, GRID * 0.055, 0, Math.PI * 2);
+            ctx.arc(rightEyeX, rightEyeY, eyeRadius, 0, Math.PI * 2);
             ctx.fill();
 
-            // Eye highlights
-            ctx.fillStyle = 'rgba(255,255,255,0.85)';
+            // Small bright highlight sparkle on each eye
+            ctx.fillStyle = '#ccffcc';
             ctx.beginPath();
-            ctx.arc(leftEyeX - GRID * 0.035, leftEyeY - GRID * 0.035, GRID * 0.028, 0, Math.PI * 2);
+            ctx.arc(leftEyeX - eyeRadius * 0.32, leftEyeY - eyeRadius * 0.32, GRID * 0.018, 0, Math.PI * 2);
             ctx.fill();
             ctx.beginPath();
-            ctx.arc(rightEyeX - GRID * 0.035, rightEyeY - GRID * 0.035, GRID * 0.028, 0, Math.PI * 2);
+            ctx.arc(rightEyeX - eyeRadius * 0.32, rightEyeY - eyeRadius * 0.32, GRID * 0.018, 0, Math.PI * 2);
             ctx.fill();
 
-            // Y-forked tongue with gentle flick
-            const tongueBaseX = hx + Math.cos(angle) * (GRID * 0.58);
-            const tongueBaseY = hy + Math.sin(angle) * (GRID * 0.58);
-            const flick = Math.sin(t * 4.2) * 0.38;
-            const forkLen = GRID * 0.85 + Math.sin(t * 3.8) * 1.5;
+            // Cute Y-forked tongue with curved prongs (quadratic for organic shape)
+            const tongueBaseX = hdx + Math.cos(angle) * (GRID * 0.55);
+            const tongueBaseY = hdy + Math.sin(angle) * (GRID * 0.55);
+            const flick = Math.sin(t * 4.2) * 0.32;
+            const forkLen = GRID * 0.82 + Math.sin(t * 3.6) * 1.2;
 
-            ctx.strokeStyle = '#ff4488';
-            ctx.lineWidth = 2.8;
+            ctx.strokeStyle = '#ff3366';
+            ctx.lineWidth = 2.4;
             ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
 
-            // Left fork
-            const angleL = angle - 0.58 + flick * 0.35;
+            // Left fork - curved outward for cute Y
+            const angleL = angle - 0.55 + flick * 0.28;
+            const endLX = tongueBaseX + Math.cos(angleL) * forkLen;
+            const endLY = tongueBaseY + Math.sin(angleL) * forkLen;
+            const ctrlLX = tongueBaseX + Math.cos(angleL) * (forkLen * 0.55) + Math.cos(angleL + 1.2) * 4.5;
+            const ctrlLY = tongueBaseY + Math.sin(angleL) * (forkLen * 0.55) + Math.sin(angleL + 1.2) * 4.5;
             ctx.beginPath();
             ctx.moveTo(tongueBaseX, tongueBaseY);
-            ctx.lineTo(
-                tongueBaseX + Math.cos(angleL) * forkLen,
-                tongueBaseY + Math.sin(angleL) * forkLen
-            );
+            ctx.quadraticCurveTo(ctrlLX, ctrlLY, endLX, endLY);
             ctx.stroke();
 
-            // Right fork
-            const angleR = angle + 0.58 - flick * 0.35;
+            // Right fork - curved outward for cute Y
+            const angleR = angle + 0.55 - flick * 0.28;
+            const endRX = tongueBaseX + Math.cos(angleR) * forkLen;
+            const endRY = tongueBaseY + Math.sin(angleR) * forkLen;
+            const ctrlRX = tongueBaseX + Math.cos(angleR) * (forkLen * 0.55) + Math.cos(angleR - 1.2) * 4.5;
+            const ctrlRY = tongueBaseY + Math.sin(angleR) * (forkLen * 0.55) + Math.sin(angleR - 1.2) * 4.5;
             ctx.beginPath();
             ctx.moveTo(tongueBaseX, tongueBaseY);
-            ctx.lineTo(
-                tongueBaseX + Math.cos(angleR) * forkLen,
-                tongueBaseY + Math.sin(angleR) * forkLen
-            );
+            ctx.quadraticCurveTo(ctrlRX, ctrlRY, endRX, endRY);
             ctx.stroke();
         }
 
@@ -573,7 +572,7 @@
             initStars();
             setupControls();
             updateScoreDisplay();
-            debugEl.innerText = 'v15.0 - stable foundation';
+            debugEl.innerText = 'v15.1 - head seated, cute Y tongue, refined eyes';
             startGame();
             gameLoop();
         }
