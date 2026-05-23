@@ -156,7 +156,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v15.6 - short start (head + 1 tail); head green; rainbow after green; food matches next segment color</div>
+    <div id="debug">v15.7 - repeating rainbow cycle; food matches added segment color</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -240,9 +240,10 @@
             food = newFood;
         }
 
-        function getBodyHue(progress) {
-            // Rainbow starts after green (green ~120). Body begins around cyan/teal and cycles nicely.
-            return (160 + progress * 260) % 360;
+        function getSegmentHue(distFromTail) {
+            // Repeating rainbow cycle that starts after green head.
+            // ~45° per segment gives nice visible repeating bands.
+            return (170 + distFromTail * 45) % 360;
         }
 
         function drawSnakeBody() {
@@ -272,8 +273,7 @@
                 }
                 ctx.lineWidth = GRID * taperFactor;
 
-                const progress = (snake.length - i) / snake.length;
-                const hue = getBodyHue(progress);
+                const hue = getSegmentHue(distFromTail);
                 ctx.strokeStyle = `hsl(${hue}, 92%, 58%)`;
 
                 ctx.beginPath();
@@ -392,12 +392,11 @@
             const fy = food.y * GRID + GRID / 2;
             const r = GRID * 0.38;
 
-            // Food color matches the color of the segment it will add (continues rainbow after green)
-            const foodProgress = snake.length / (snake.length + 1);
-            const foodHue = getBodyHue(foodProgress);
+            // Food color predicts the color of the new segment it will add (continues the repeating rainbow)
+            const nextDistFromTail = snake.length; // the new segment will be at distFromTail = current length (before unshift)
+            const foodHue = getSegmentHue(nextDistFromTail);
             ctx.fillStyle = `hsl(${foodHue}, 92%, 65%)`;
 
-            // Glow
             ctx.fillStyle = `hsla(${foodHue}, 92%, 75%, 0.3)`;
             ctx.beginPath();
             ctx.arc(fx, fy, r * 1.4, 0, Math.PI * 2);
@@ -408,7 +407,6 @@
             ctx.arc(fx, fy, r, 0, Math.PI * 2);
             ctx.fill();
 
-            // Shine
             ctx.fillStyle = 'rgba(255,255,255,0.6)';
             ctx.beginPath();
             ctx.arc(fx - r * 0.25, fy - r * 0.25, r * 0.35, 0, Math.PI * 2);
@@ -582,7 +580,7 @@
             initStars();
             setupControls();
             updateScoreDisplay();
-            debugEl.innerText = 'v15.6 - short start (head + 1 tail); head green; rainbow after green; food matches next segment color';
+            debugEl.innerText = 'v15.7 - repeating rainbow cycle; food matches added segment color';
             startGame();
             gameLoop();
         }
