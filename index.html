@@ -156,7 +156,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v16.1.6 - fixed initial tail hue (stays greenish teal until you eat)</div>
+    <div id="debug">v16.1.7 - initial tail hue now stays greenish teal (no cycling at start)</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -195,7 +195,7 @@
         let eatEffects = [];
         let stars = [];
         let frameCount = 0;
-        let nextBodyHue = 220; // next hue after the fixed initial tail (175)
+        let nextBodyHue = 220;
 
         const scoreEl = document.getElementById('score');
         const debugEl = document.getElementById('debug');
@@ -274,7 +274,8 @@
                 }
                 ctx.lineWidth = GRID * taperFactor;
 
-                const hue = (seg.hue !== undefined && seg.hue !== null) ? seg.hue : ((i * 45 + 175) % 360);
+                // Strong defensive: never let missing hue cause blue cycling
+                const hue = seg.hue ?? 175;
                 ctx.strokeStyle = `hsl(${hue}, 92%, 58%)`;
 
                 ctx.beginPath();
@@ -523,12 +524,11 @@
         }
 
         function startGame() {
-            // Fixed initial tail hue so it stays greenish teal until you actually eat
             snake = [
                 { x: 8, y: 10, hue: 120 },
-                { x: 7, y: 10, hue: 175 }   // greenish teal - does NOT call getNextBodyHue()
+                { x: 7, y: 10, hue: 175 }
             ];
-            nextBodyHue = 220; // first new segment added at tail will be this
+            nextBodyHue = 220;
             dx = 1;
             dy = 0;
             score = 0;
@@ -583,7 +583,7 @@
             initStars();
             setupControls();
             updateScoreDisplay();
-            debugEl.innerText = 'v16.1.6 - fixed initial tail hue (stays greenish teal until you eat)';
+            debugEl.innerText = 'v16.1.7 - initial tail hue now stays greenish teal (no cycling at start)';
             startGame();
             gameLoop();
         }
