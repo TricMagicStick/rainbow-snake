@@ -156,7 +156,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v16.1.5 - short start + greenish teal first segment + new colors at tail</div>
+    <div id="debug">v16.1.6 - fixed initial tail hue (stays greenish teal until you eat)</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -195,7 +195,7 @@
         let eatEffects = [];
         let stars = [];
         let frameCount = 0;
-        let nextBodyHue = 175; // greenish teal starting color after green head
+        let nextBodyHue = 220; // next hue after the fixed initial tail (175)
 
         const scoreEl = document.getElementById('score');
         const debugEl = document.getElementById('debug');
@@ -523,11 +523,12 @@
         }
 
         function startGame() {
-            nextBodyHue = 175; // greenish teal
+            // Fixed initial tail hue so it stays greenish teal until you actually eat
             snake = [
                 { x: 8, y: 10, hue: 120 },
-                { x: 7, y: 10, hue: getNextBodyHue() }
+                { x: 7, y: 10, hue: 175 }   // greenish teal - does NOT call getNextBodyHue()
             ];
+            nextBodyHue = 220; // first new segment added at tail will be this
             dx = 1;
             dy = 0;
             score = 0;
@@ -582,7 +583,7 @@
             initStars();
             setupControls();
             updateScoreDisplay();
-            debugEl.innerText = 'v16.1.5 - short start + greenish teal first segment + new colors at tail';
+            debugEl.innerText = 'v16.1.6 - fixed initial tail hue (stays greenish teal until you eat)';
             startGame();
             gameLoop();
         }
