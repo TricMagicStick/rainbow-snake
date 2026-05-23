@@ -156,7 +156,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v15.8 - repeating rainbow flows from head; new segments continue pattern correctly</div>
+    <div id="debug">v15.9 - growth at tail; rainbow flows from green head; new colors added at tail end</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -241,8 +241,7 @@
         }
 
         function getSegmentHue(indexFromHead) {
-            // Repeating rainbow that flows backward from the head (after green).
-            // New segments added right behind head continue the pattern.
+            // Rainbow flows from head (green). New colors added at tail end.
             return (170 + indexFromHead * 45) % 360;
         }
 
@@ -273,8 +272,7 @@
                 }
                 ctx.lineWidth = GRID * taperFactor;
 
-                // Color based on position from head so new segments continue the rainbow correctly
-                const indexFromHead = (snake.length - 1) - i;  // 0 = first segment after head, higher = toward tail
+                const indexFromHead = (snake.length - 1) - i;
                 const hue = getSegmentHue(indexFromHead);
                 ctx.strokeStyle = `hsl(${hue}, 92%, 58%)`;
 
@@ -392,9 +390,9 @@
             const fy = food.y * GRID + GRID / 2;
             const r = GRID * 0.38;
 
-            // Food predicts the color the new segment (added right behind head) will have
-            const nextIndexFromHead = 0; // new segment becomes the first after head
-            const foodHue = getSegmentHue(nextIndexFromHead);
+            // Food color = color of the segment that will be added at the tail end
+            const nextTailIndexFromHead = snake.length; // will become the new last segment
+            const foodHue = getSegmentHue(nextTailIndexFromHead);
             ctx.fillStyle = `hsl(${foodHue}, 92%, 65%)`;
 
             ctx.fillStyle = `hsla(${foodHue}, 92%, 75%, 0.3)`;
@@ -464,6 +462,10 @@
             if (newHead.x === food.x && newHead.y === food.y) {
                 score++;
                 updateScoreDisplay();
+
+                // Grow at tail: append new segment at end (new colors added to tail)
+                const currentTail = snake[snake.length - 1];
+                snake.push({ x: currentTail.x, y: currentTail.y });
 
                 const fx = food.x * GRID + GRID / 2;
                 const fy = food.y * GRID + GRID / 2;
@@ -579,7 +581,7 @@
             initStars();
             setupControls();
             updateScoreDisplay();
-            debugEl.innerText = 'v15.8 - repeating rainbow flows from head; new segments continue pattern correctly';
+            debugEl.innerText = 'v15.9 - growth at tail; rainbow flows from green head; new colors added at tail end';
             startGame();
             gameLoop();
         }
