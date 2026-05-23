@@ -156,7 +156,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v15.7 - repeating rainbow cycle; food matches added segment color</div>
+    <div id="debug">v15.8 - repeating rainbow flows from head; new segments continue pattern correctly</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -240,10 +240,10 @@
             food = newFood;
         }
 
-        function getSegmentHue(distFromTail) {
-            // Repeating rainbow cycle that starts after green head.
-            // ~45° per segment gives nice visible repeating bands.
-            return (170 + distFromTail * 45) % 360;
+        function getSegmentHue(indexFromHead) {
+            // Repeating rainbow that flows backward from the head (after green).
+            // New segments added right behind head continue the pattern.
+            return (170 + indexFromHead * 45) % 360;
         }
 
         function drawSnakeBody() {
@@ -273,7 +273,9 @@
                 }
                 ctx.lineWidth = GRID * taperFactor;
 
-                const hue = getSegmentHue(distFromTail);
+                // Color based on position from head so new segments continue the rainbow correctly
+                const indexFromHead = (snake.length - 1) - i;  // 0 = first segment after head, higher = toward tail
+                const hue = getSegmentHue(indexFromHead);
                 ctx.strokeStyle = `hsl(${hue}, 92%, 58%)`;
 
                 ctx.beginPath();
@@ -302,7 +304,6 @@
             ctx.ellipse(3, 4, GRID * 0.52, GRID * 0.46, 0, 0, Math.PI * 2);
             ctx.fill();
 
-            // Head is always green
             ctx.fillStyle = '#22cc55';
             ctx.beginPath();
             ctx.ellipse(0, 0, GRID * 0.52, GRID * 0.46, 0, 0, Math.PI * 2);
@@ -317,7 +318,6 @@
             ctx.fill();
             ctx.restore();
 
-            // Eyes
             const eyeDist = GRID * 0.175;
             const eyeFwd = GRID * 0.10;
             const eyePerp = Math.PI / 2;
@@ -392,9 +392,9 @@
             const fy = food.y * GRID + GRID / 2;
             const r = GRID * 0.38;
 
-            // Food color predicts the color of the new segment it will add (continues the repeating rainbow)
-            const nextDistFromTail = snake.length; // the new segment will be at distFromTail = current length (before unshift)
-            const foodHue = getSegmentHue(nextDistFromTail);
+            // Food predicts the color the new segment (added right behind head) will have
+            const nextIndexFromHead = 0; // new segment becomes the first after head
+            const foodHue = getSegmentHue(nextIndexFromHead);
             ctx.fillStyle = `hsl(${foodHue}, 92%, 65%)`;
 
             ctx.fillStyle = `hsla(${foodHue}, 92%, 75%, 0.3)`;
@@ -521,10 +521,9 @@
         }
 
         function startGame() {
-            // Short start: head + only one tail segment
             snake = [
-                { x: 8, y: 10 }, // head (green)
-                { x: 7, y: 10 }  // single tail segment
+                { x: 8, y: 10 },
+                { x: 7, y: 10 }
             ];
             dx = 1;
             dy = 0;
@@ -580,7 +579,7 @@
             initStars();
             setupControls();
             updateScoreDisplay();
-            debugEl.innerText = 'v15.7 - repeating rainbow cycle; food matches added segment color';
+            debugEl.innerText = 'v15.8 - repeating rainbow flows from head; new segments continue pattern correctly';
             startGame();
             gameLoop();
         }
