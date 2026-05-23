@@ -156,7 +156,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v16.1.7 - initial tail hue now stays greenish teal (no cycling at start)</div>
+    <div id="debug">v16.1.8 - stable rainbow (position-based, length-aware)</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -195,7 +195,6 @@
         let eatEffects = [];
         let stars = [];
         let frameCount = 0;
-        let nextBodyHue = 220;
 
         const scoreEl = document.getElementById('score');
         const debugEl = document.getElementById('debug');
@@ -241,10 +240,10 @@
             food = newFood;
         }
 
-        function getNextBodyHue() {
-            const h = nextBodyHue;
-            nextBodyHue = (nextBodyHue + 45) % 360;
-            return h;
+        function getBodyHue(distFromHead, snakeLength) {
+            const base = 170;
+            const step = 42;
+            return (base + (distFromHead + snakeLength * 0.3) * step) % 360;
         }
 
         function drawSnakeBody() {
@@ -274,8 +273,8 @@
                 }
                 ctx.lineWidth = GRID * taperFactor;
 
-                // Strong defensive: never let missing hue cause blue cycling
-                const hue = seg.hue ?? 175;
+                const distFromHead = (snake.length - 1) - i;
+                const hue = getBodyHue(distFromHead, snake.length);
                 ctx.strokeStyle = `hsl(${hue}, 92%, 58%)`;
 
                 ctx.beginPath();
@@ -392,7 +391,7 @@
             const fy = food.y * GRID + GRID / 2;
             const r = GRID * 0.38;
 
-            const foodHue = nextBodyHue;
+            const foodHue = getBodyHue(0, snake.length);
             ctx.fillStyle = `hsl(${foodHue}, 92%, 65%)`;
 
             ctx.fillStyle = `hsla(${foodHue}, 92%, 75%, 0.3)`;
@@ -463,11 +462,6 @@
                 score++;
                 updateScoreDisplay();
 
-                const newHue = getNextBodyHue();
-                const tail = snake[snake.length - 1];
-                snake.push({ x: tail.x, y: tail.y, hue: newHue });
-                snake.pop();
-
                 const fx = food.x * GRID + GRID / 2;
                 const fy = food.y * GRID + GRID / 2;
                 eatEffects.push({ x: fx, y: fy, life: 26, type: 'ring' });
@@ -525,10 +519,10 @@
 
         function startGame() {
             snake = [
-                { x: 8, y: 10, hue: 120 },
-                { x: 7, y: 10, hue: 175 }
+                { x: 8, y: 10 },
+                { x: 7, y: 10 },
+                { x: 6, y: 10 }
             ];
-            nextBodyHue = 220;
             dx = 1;
             dy = 0;
             score = 0;
@@ -583,7 +577,7 @@
             initStars();
             setupControls();
             updateScoreDisplay();
-            debugEl.innerText = 'v16.1.7 - initial tail hue now stays greenish teal (no cycling at start)';
+            debugEl.innerText = 'v16.1.8 - stable rainbow (position-based, length-aware)';
             startGame();
             gameLoop();
         }
