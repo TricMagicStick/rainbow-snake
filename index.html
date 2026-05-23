@@ -156,7 +156,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v15.9.7 - stable single growth + rainbow from head</div>
+    <div id="debug">v15.9.8 - rainbow flows toward tail (growth feels at back)</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -240,9 +240,9 @@
             food = newFood;
         }
 
-        function getBodyHue(indexFromHead) {
-            // Rainbow starts after green head (~120). Body starts ~170 (cyan) and cycles.
-            return (170 + indexFromHead * 45) % 360;
+        function getBodyHue(distFromHead) {
+            // Reversed so the rainbow "advances" toward the tail (growth feels like it happens at the back)
+            return (170 + distFromHead * 45) % 360;
         }
 
         function drawSnakeBody() {
@@ -272,8 +272,9 @@
                 }
                 ctx.lineWidth = GRID * taperFactor;
 
-                const indexFromHead = (snake.length - 1) - i;
-                const hue = getBodyHue(indexFromHead);
+                // Use distance from head so newer colors are toward the tail end
+                const distFromHead = (snake.length - 1) - i;
+                const hue = getBodyHue(distFromHead);
                 ctx.strokeStyle = `hsl(${hue}, 92%, 58%)`;
 
                 ctx.beginPath();
@@ -390,8 +391,7 @@
             const fy = food.y * GRID + GRID / 2;
             const r = GRID * 0.38;
 
-            const foodProgress = snake.length / (snake.length + 1);
-            const foodHue = getBodyHue(foodProgress * 5); // rough prediction
+            const foodHue = getBodyHue(0); // next color near head area for prediction feel
             ctx.fillStyle = `hsl(${foodHue}, 92%, 65%)`;
 
             ctx.fillStyle = `hsla(${foodHue}, 92%, 75%, 0.3)`;
@@ -577,7 +577,7 @@
             initStars();
             setupControls();
             updateScoreDisplay();
-            debugEl.innerText = 'v15.9.7 - stable single growth + rainbow from head';
+            debugEl.innerText = 'v15.9.8 - rainbow flows toward tail (growth feels at back)';
             startGame();
             gameLoop();
         }
