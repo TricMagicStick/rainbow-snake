@@ -156,7 +156,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v15.5 - tail taper fixed (correctly thin at the very end)</div>
+    <div id="debug">v15.6 - short start (head + 1 tail); head green; rainbow after green; food matches next segment color</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -240,6 +240,11 @@
             food = newFood;
         }
 
+        function getBodyHue(progress) {
+            // Rainbow starts after green (green ~120). Body begins around cyan/teal and cycles nicely.
+            return (160 + progress * 260) % 360;
+        }
+
         function drawSnakeBody() {
             if (snake.length < 2) return;
             ctx.lineJoin = 'round';
@@ -260,7 +265,6 @@
 
                 let taperFactor;
                 if (distFromTail < taperSegments) {
-                    // Correct direction: thinnest at true tail (distFromTail = 0), thickest near body
                     const t = distFromTail / (taperSegments - 1);
                     taperFactor = bodyWidth * (0.35 + 0.65 * t);
                 } else {
@@ -269,7 +273,7 @@
                 ctx.lineWidth = GRID * taperFactor;
 
                 const progress = (snake.length - i) / snake.length;
-                const hue = (progress * 320) % 360;
+                const hue = getBodyHue(progress);
                 ctx.strokeStyle = `hsl(${hue}, 92%, 58%)`;
 
                 ctx.beginPath();
@@ -298,6 +302,7 @@
             ctx.ellipse(3, 4, GRID * 0.52, GRID * 0.46, 0, 0, Math.PI * 2);
             ctx.fill();
 
+            // Head is always green
             ctx.fillStyle = '#22cc55';
             ctx.beginPath();
             ctx.ellipse(0, 0, GRID * 0.52, GRID * 0.46, 0, 0, Math.PI * 2);
@@ -312,6 +317,7 @@
             ctx.fill();
             ctx.restore();
 
+            // Eyes
             const eyeDist = GRID * 0.175;
             const eyeFwd = GRID * 0.10;
             const eyePerp = Math.PI / 2;
@@ -386,24 +392,26 @@
             const fy = food.y * GRID + GRID / 2;
             const r = GRID * 0.38;
 
-            ctx.fillStyle = 'rgba(255, 80, 180, 0.25)';
+            // Food color matches the color of the segment it will add (continues rainbow after green)
+            const foodProgress = snake.length / (snake.length + 1);
+            const foodHue = getBodyHue(foodProgress);
+            ctx.fillStyle = `hsl(${foodHue}, 92%, 65%)`;
+
+            // Glow
+            ctx.fillStyle = `hsla(${foodHue}, 92%, 75%, 0.3)`;
             ctx.beginPath();
-            ctx.arc(fx, fy, r * 1.35, 0, Math.PI * 2);
+            ctx.arc(fx, fy, r * 1.4, 0, Math.PI * 2);
             ctx.fill();
 
-            ctx.fillStyle = '#ff55aa';
+            ctx.fillStyle = `hsl(${foodHue}, 92%, 65%)`;
             ctx.beginPath();
             ctx.arc(fx, fy, r, 0, Math.PI * 2);
             ctx.fill();
 
-            ctx.fillStyle = 'rgba(255, 220, 240, 0.65)';
+            // Shine
+            ctx.fillStyle = 'rgba(255,255,255,0.6)';
             ctx.beginPath();
-            ctx.arc(fx - r * 0.28, fy - r * 0.28, r * 0.38, 0, Math.PI * 2);
-            ctx.fill();
-
-            ctx.fillStyle = 'rgba(255,255,255,0.9)';
-            ctx.beginPath();
-            ctx.arc(fx - r * 0.22, fy - r * 0.32, r * 0.12, 0, Math.PI * 2);
+            ctx.arc(fx - r * 0.25, fy - r * 0.25, r * 0.35, 0, Math.PI * 2);
             ctx.fill();
         }
 
@@ -515,12 +523,10 @@
         }
 
         function startGame() {
+            // Short start: head + only one tail segment
             snake = [
-                { x: 8, y: 10 },
-                { x: 7, y: 10 },
-                { x: 6, y: 10 },
-                { x: 5, y: 10 },
-                { x: 4, y: 10 }
+                { x: 8, y: 10 }, // head (green)
+                { x: 7, y: 10 }  // single tail segment
             ];
             dx = 1;
             dy = 0;
@@ -576,7 +582,7 @@
             initStars();
             setupControls();
             updateScoreDisplay();
-            debugEl.innerText = 'v15.5 - tail taper fixed (correctly thin at the very end)';
+            debugEl.innerText = 'v15.6 - short start (head + 1 tail); head green; rainbow after green; food matches next segment color';
             startGame();
             gameLoop();
         }
