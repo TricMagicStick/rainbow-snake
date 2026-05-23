@@ -156,7 +156,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v16.1.9 - short start + per-segment tail growth (stable hues)</div>
+    <div id="debug">v16.1.10 - short start + per-segment tail growth (safe rainbow fallback)</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -274,8 +274,9 @@
                 }
                 ctx.lineWidth = GRID * taperFactor;
 
-                // Use stored hue directly - no fallback that forces single color
-                ctx.strokeStyle = `hsl(${seg.hue}, 92%, 58%)`;
+                // Safe fallback that produces rainbow instead of red or solid teal
+                const hue = seg.hue ?? ((i * 45 + 170) % 360);
+                ctx.strokeStyle = `hsl(${hue}, 92%, 58%)`;
 
                 ctx.beginPath();
                 ctx.moveTo(x1, y1);
@@ -582,7 +583,7 @@
             initStars();
             setupControls();
             updateScoreDisplay();
-            debugEl.innerText = 'v16.1.9 - short start + per-segment tail growth (stable hues)';
+            debugEl.innerText = 'v16.1.10 - short start + per-segment tail growth (safe rainbow fallback)';
             startGame();
             gameLoop();
         }
