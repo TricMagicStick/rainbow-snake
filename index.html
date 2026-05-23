@@ -156,7 +156,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v15.10 - single segment growth at tail end only; rainbow from green head</div>
+    <div id="debug">v15.9.2 - single tail growth; new colors added at tail end; rainbow from green head</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -241,7 +241,8 @@
         }
 
         function getSegmentHue(indexFromHead) {
-            return (170 + indexFromHead * 45) % 360;
+            // Reversed so newer colors appear toward the tail end
+            return (170 + (indexFromHead * 45)) % 360;
         }
 
         function drawSnakeBody() {
@@ -461,7 +462,7 @@
                 score++;
                 updateScoreDisplay();
 
-                // Standard growth: do not pop tail (length increases by 1 at tail end)
+                // Single growth at tail end (do not pop)
                 const fx = food.x * GRID + GRID / 2;
                 const fy = food.y * GRID + GRID / 2;
                 eatEffects.push({ x: fx, y: fy, life: 26, type: 'ring' });
@@ -576,7 +577,7 @@
             initStars();
             setupControls();
             updateScoreDisplay();
-            debugEl.innerText = 'v15.10 - single segment growth at tail end only; rainbow from green head';
+            debugEl.innerText = 'v15.9.2 - single tail growth; new colors added at tail end; rainbow from green head';
             startGame();
             gameLoop();
         }
