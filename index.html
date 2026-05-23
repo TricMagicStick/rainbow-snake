@@ -156,7 +156,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v16.1.4 - short start + new colors only at tail (per-segment)</div>
+    <div id="debug">v16.1.5 - short start + greenish teal first segment + new colors at tail</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -195,7 +195,7 @@
         let eatEffects = [];
         let stars = [];
         let frameCount = 0;
-        let nextBodyHue = 200; // nice starting color after green (teal/cyan-ish)
+        let nextBodyHue = 175; // greenish teal starting color after green head
 
         const scoreEl = document.getElementById('score');
         const debugEl = document.getElementById('debug');
@@ -274,7 +274,7 @@
                 }
                 ctx.lineWidth = GRID * taperFactor;
 
-                const hue = (seg.hue !== undefined && seg.hue !== null) ? seg.hue : ((i * 45 + 200) % 360);
+                const hue = (seg.hue !== undefined && seg.hue !== null) ? seg.hue : ((i * 45 + 175) % 360);
                 ctx.strokeStyle = `hsl(${hue}, 92%, 58%)`;
 
                 ctx.beginPath();
@@ -523,10 +523,10 @@
         }
 
         function startGame() {
-            nextBodyHue = 200;
+            nextBodyHue = 175; // greenish teal
             snake = [
-                { x: 8, y: 10, hue: 120 }, // green head
-                { x: 7, y: 10, hue: getNextBodyHue() } // single tail segment (short start)
+                { x: 8, y: 10, hue: 120 },
+                { x: 7, y: 10, hue: getNextBodyHue() }
             ];
             dx = 1;
             dy = 0;
@@ -582,7 +582,7 @@
             initStars();
             setupControls();
             updateScoreDisplay();
-            debugEl.innerText = 'v16.1.4 - short start + new colors only at tail (per-segment)';
+            debugEl.innerText = 'v16.1.5 - short start + greenish teal first segment + new colors at tail';
             startGame();
             gameLoop();
         }
