@@ -156,7 +156,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v15.9.9 - new colored segments added only at tail (fixed neck growth)</div>
+    <div id="debug">sad v16.0.1 - stable rainbow, single growth, no flashing red</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -195,7 +195,6 @@
         let eatEffects = [];
         let stars = [];
         let frameCount = 0;
-        let nextBodyHue = 170;
 
         const scoreEl = document.getElementById('score');
         const debugEl = document.getElementById('debug');
@@ -241,10 +240,9 @@
             food = newFood;
         }
 
-        function getNextBodyHue() {
-            const h = nextBodyHue;
-            nextBodyHue = (nextBodyHue + 45) % 360;
-            return h;
+        function getBodyHue(distFromHead) {
+            // Rainbow starts after green head and flows toward tail
+            return (170 + distFromHead * 45) % 360;
         }
 
         function drawSnakeBody() {
@@ -274,7 +272,9 @@
                 }
                 ctx.lineWidth = GRID * taperFactor;
 
-                ctx.strokeStyle = `hsl(${seg.hue}, 92%, 58%)`;
+                const distFromHead = (snake.length - 1) - i;
+                const hue = getBodyHue(distFromHead);
+                ctx.strokeStyle = `hsl(${hue}, 92%, 58%)`;
 
                 ctx.beginPath();
                 ctx.moveTo(x1, y1);
@@ -390,7 +390,7 @@
             const fy = food.y * GRID + GRID / 2;
             const r = GRID * 0.38;
 
-            const foodHue = nextBodyHue;
+            const foodHue = getBodyHue(0);
             ctx.fillStyle = `hsl(${foodHue}, 92%, 65%)`;
 
             ctx.fillStyle = `hsla(${foodHue}, 92%, 75%, 0.3)`;
@@ -461,12 +461,6 @@
                 score++;
                 updateScoreDisplay();
 
-                // Correct single growth + new colored segment only at tail end
-                const newHue = getNextBodyHue();
-                const tail = snake[snake.length - 1];
-                snake.push({ x: tail.x, y: tail.y, hue: newHue }); // add new colored at tail
-                snake.pop(); // remove the old tail (net +1, new color stays at end)
-
                 const fx = food.x * GRID + GRID / 2;
                 const fy = food.y * GRID + GRID / 2;
                 eatEffects.push({ x: fx, y: fy, life: 26, type: 'ring' });
@@ -523,10 +517,10 @@
         }
 
         function startGame() {
-            nextBodyHue = 170;
             snake = [
-                { x: 8, y: 10, hue: 120 },
-                { x: 7, y: 10, hue: getNextBodyHue() }
+                { x: 8, y: 10 },
+                { x: 7, y: 10 },
+                { x: 6, y: 10 }
             ];
             dx = 1;
             dy = 0;
@@ -582,7 +576,7 @@
             initStars();
             setupControls();
             updateScoreDisplay();
-            debugEl.innerText = 'v15.9.9 - new colored segments added only at tail (fixed neck growth)';
+            debugEl.innerText = 'sad v16.0.1 - stable rainbow, single growth, no flashing red';
             startGame();
             gameLoop();
         }
