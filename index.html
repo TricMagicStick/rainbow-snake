@@ -156,7 +156,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v15.9.4 - per-segment colors fixed (no more flashing red)</div>
+    <div id="debug">v15.9.5 - correct single tail growth with per-segment colors</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -274,7 +274,6 @@
                 }
                 ctx.lineWidth = GRID * taperFactor;
 
-                // Use the stored per-segment hue (this was the bug before)
                 ctx.strokeStyle = `hsl(${seg.hue}, 92%, 58%)`;
 
                 ctx.beginPath();
@@ -462,6 +461,8 @@
                 score++;
                 updateScoreDisplay();
 
+                // Net +1 growth: unshift already added head, pop removes old tail, push adds new colored tail segment
+                snake.pop(); // remove old tail
                 const newHue = getNextTailHue();
                 const currentTail = snake[snake.length - 1];
                 snake.push({ x: currentTail.x, y: currentTail.y, hue: newHue });
@@ -581,7 +582,7 @@
             initStars();
             setupControls();
             updateScoreDisplay();
-            debugEl.innerText = 'v15.9.4 - per-segment colors fixed (no more flashing red)';
+            debugEl.innerText = 'v15.9.5 - correct single tail growth with per-segment colors';
             startGame();
             gameLoop();
         }
