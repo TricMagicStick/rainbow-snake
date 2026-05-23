@@ -156,7 +156,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v15.2 - tongue with stem + short branches + in/out flick; tail-only taper</div>
+    <div id="debug">v15.3 - full tongue retraction into head; slimmer body</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -253,14 +253,14 @@
                 const x2 = prevSeg.x * GRID + GRID / 2;
                 const y2 = prevSeg.y * GRID + GRID / 2;
 
-                // Tail-only taper: only last ~7 segments taper, main body stays consistent thickness
+                // Tail-only taper (last 7 segments). Main body now slimmer overall.
                 const distFromTail = (snake.length - 1) - i;
                 const taperSegments = 7;
                 let taperFactor;
                 if (distFromTail < taperSegments) {
-                    taperFactor = 0.32 + (0.58 * (distFromTail / (taperSegments - 1)));
+                    taperFactor = 0.30 + (0.52 * (distFromTail / (taperSegments - 1)));
                 } else {
-                    taperFactor = 0.88; // consistent thick body for most of the snake
+                    taperFactor = 0.70; // slimmer consistent body
                 }
                 ctx.lineWidth = GRID * taperFactor;
 
@@ -282,7 +282,6 @@
             const hy = head.y * GRID + GRID / 2;
             const angle = Math.atan2(dy, dx);
 
-            // Slight forward offset so head sits naturally on the body
             const forwardOffset = 2.8;
             const hdx = hx + Math.cos(angle) * forwardOffset;
             const hdy = hy + Math.sin(angle) * forwardOffset;
@@ -312,7 +311,7 @@
             ctx.fill();
             ctx.restore();
 
-            // Eyes - small dark cute eyes with bright highlight only
+            // Eyes
             const eyeDist = GRID * 0.175;
             const eyeFwd = GRID * 0.10;
             const eyePerp = Math.PI / 2;
@@ -339,21 +338,20 @@
             ctx.arc(rightEyeX - eyeRadius * 0.32, rightEyeY - eyeRadius * 0.32, GRID * 0.018, 0, Math.PI * 2);
             ctx.fill();
 
-            // Tongue: short stem + short Y branches, small overall, flicks in and out of head
-            const mouthX = hdx + Math.cos(angle) * (GRID * 0.48);
-            const mouthY = hdy + Math.sin(angle) * (GRID * 0.48);
+            // Tongue: full retraction into head (stem shortens + pulls back, branches retract into stem)
+            const mouthX = hdx + Math.cos(angle) * (GRID * 0.46);
+            const mouthY = hdy + Math.sin(angle) * (GRID * 0.46);
 
-            // In/out extension animation (flicks out then back toward head)
-            const inOut = (Math.sin(t * 5.2) + 1) * 0.5; // 0 (in) to 1 (out)
-            const sideFlick = Math.sin(t * 4.0) * 0.22;
+            const inOut = (Math.sin(t * 5.2) + 1) * 0.5; // 0 = fully in/retracted, 1 = fully out
+            const sideFlick = Math.sin(t * 4.0) * 0.20;
 
             ctx.strokeStyle = '#ff3366';
-            ctx.lineWidth = 2.6;
+            ctx.lineWidth = 2.5;
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
 
-            // Short central stem coming out of head
-            const stemLen = GRID * 0.16;
+            // Stem length varies with inOut so it retracts fully into the head
+            const stemLen = GRID * 0.12 * inOut;
             const stemEndX = mouthX + Math.cos(angle) * stemLen;
             const stemEndY = mouthY + Math.sin(angle) * stemLen;
 
@@ -362,26 +360,26 @@
             ctx.lineTo(stemEndX, stemEndY);
             ctx.stroke();
 
-            // Short Y branches from end of stem (much shorter than before)
-            const forkLen = GRID * 0.48 * (0.65 + 0.35 * inOut); // short + pulses in/out
-            const angleL = angle - 0.48 + sideFlick;
-            const angleR = angle + 0.48 - sideFlick;
+            // Short Y branches (also scale with inOut so they disappear into the stem when retracting)
+            const forkLen = GRID * 0.40 * (0.35 + 0.65 * inOut);
+            const angleL = angle - 0.46 + sideFlick;
+            const angleR = angle + 0.46 - sideFlick;
 
-            // Left branch (curved, short)
+            // Left branch
             const endLX = stemEndX + Math.cos(angleL) * forkLen;
             const endLY = stemEndY + Math.sin(angleL) * forkLen;
-            const ctrlLX = stemEndX + Math.cos(angleL) * (forkLen * 0.5) + Math.cos(angleL + 1.1) * 3.5;
-            const ctrlLY = stemEndY + Math.sin(angleL) * (forkLen * 0.5) + Math.sin(angleL + 1.1) * 3.5;
+            const ctrlLX = stemEndX + Math.cos(angleL) * (forkLen * 0.5) + Math.cos(angleL + 1.05) * 3;
+            const ctrlLY = stemEndY + Math.sin(angleL) * (forkLen * 0.5) + Math.sin(angleL + 1.05) * 3;
             ctx.beginPath();
             ctx.moveTo(stemEndX, stemEndY);
             ctx.quadraticCurveTo(ctrlLX, ctrlLY, endLX, endLY);
             ctx.stroke();
 
-            // Right branch (curved, short)
+            // Right branch
             const endRX = stemEndX + Math.cos(angleR) * forkLen;
             const endRY = stemEndY + Math.sin(angleR) * forkLen;
-            const ctrlRX = stemEndX + Math.cos(angleR) * (forkLen * 0.5) + Math.cos(angleR - 1.1) * 3.5;
-            const ctrlRY = stemEndY + Math.sin(angleR) * (forkLen * 0.5) + Math.sin(angleR - 1.1) * 3.5;
+            const ctrlRX = stemEndX + Math.cos(angleR) * (forkLen * 0.5) + Math.cos(angleR - 1.05) * 3;
+            const ctrlRY = stemEndY + Math.sin(angleR) * (forkLen * 0.5) + Math.sin(angleR - 1.05) * 3;
             ctx.beginPath();
             ctx.moveTo(stemEndX, stemEndY);
             ctx.quadraticCurveTo(ctrlRX, ctrlRY, endRX, endRY);
@@ -393,25 +391,21 @@
             const fy = food.y * GRID + GRID / 2;
             const r = GRID * 0.38;
 
-            // Glow
             ctx.fillStyle = 'rgba(255, 80, 180, 0.25)';
             ctx.beginPath();
             ctx.arc(fx, fy, r * 1.35, 0, Math.PI * 2);
             ctx.fill();
 
-            // Main orb
             ctx.fillStyle = '#ff55aa';
             ctx.beginPath();
             ctx.arc(fx, fy, r, 0, Math.PI * 2);
             ctx.fill();
 
-            // Inner shine
             ctx.fillStyle = 'rgba(255, 220, 240, 0.65)';
             ctx.beginPath();
             ctx.arc(fx - r * 0.28, fy - r * 0.28, r * 0.38, 0, Math.PI * 2);
             ctx.fill();
 
-            // Small highlight dot
             ctx.fillStyle = 'rgba(255,255,255,0.9)';
             ctx.beginPath();
             ctx.arc(fx - r * 0.22, fy - r * 0.32, r * 0.12, 0, Math.PI * 2);
@@ -454,13 +448,11 @@
             const head = snake[0];
             const newHead = { x: head.x + dx, y: head.y + dy };
 
-            // Wall collision
             if (newHead.x < 0 || newHead.x >= COLS || newHead.y < 0 || newHead.y >= ROWS) {
                 endGame();
                 return;
             }
 
-            // Self collision
             if (snake.some(s => s.x === newHead.x && s.y === newHead.y)) {
                 endGame();
                 return;
@@ -501,7 +493,6 @@
             frameCount++;
             const t = Date.now() / 1000;
 
-            // Dark background for stars
             ctx.fillStyle = '#0a001f';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -552,7 +543,6 @@
         }
 
         function setupControls() {
-            // D-pad
             document.getElementById('up').addEventListener('click', () => {
                 if (dy !== 1) { dx = 0; dy = -1; }
             });
@@ -566,7 +556,6 @@
                 if (dx !== -1) { dx = 1; dy = 0; }
             });
 
-            // Keyboard
             document.addEventListener('keydown', (e) => {
                 if (!gameRunning && e.key.toLowerCase() === 'r') {
                     restartGame();
@@ -586,14 +575,13 @@
                 }
             });
 
-            // Restart button also works via onclick already
         }
 
         function init() {
             initStars();
             setupControls();
             updateScoreDisplay();
-            debugEl.innerText = 'v15.2 - tongue with stem + short branches + in/out flick; tail-only taper';
+            debugEl.innerText = 'v15.3 - full tongue retraction into head; slimmer body';
             startGame();
             gameLoop();
         }
