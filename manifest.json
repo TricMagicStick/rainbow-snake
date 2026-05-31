@@ -1,0 +1,10 @@
+{
+  "name": "Rainbow Snake",
+  "short_name": "Rainbow Snake",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#1a0033",
+  "theme_color": "#1a0033",
+  "description": "A fun retro rainbow snake game with cute animations. Optimized for iOS Safari and mobile play with swipe controls.",
+  "orientation": "portrait"
+}
