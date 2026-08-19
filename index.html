@@ -34,7 +34,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v16.3.0 - growth fixed + tongue fix</div>
+    <div id="debug">v16.3.1 - growth + tongue + body draw fixed</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -117,7 +117,7 @@
             for (let i = snake.length - 1; i >= 1; i--) {
                 const seg = snake[i]; const prevSeg = snake[i - 1];
                 const x1 = seg.x * GRID + GRID / 2; const y1 = seg.y * GRID + GRID / 2;
-                const x2 = prevSeg.x * GRID + GRID / 2; const y2 = prevSeg.y * GRID / 2;
+                const x2 = prevSeg.x * GRID + GRID / 2; const y2 = prevSeg.y * GRID + GRID / 2;
                 const distFromTail = (snake.length - 1) - i; const taperSegments = 7;
                 let taperFactor = (distFromTail < taperSegments) ? bodyWidth * (0.35 + 0.65 * (distFromTail / (taperSegments - 1))) : bodyWidth;
                 ctx.lineWidth = GRID * taperFactor;
@@ -181,7 +181,7 @@
             if (newHead.x === food.x && newHead.y === food.y) {
                 score++;
                 updateScoreDisplay();
-                // Grow: keep the new head, assign fresh rainbow hue to the new body segment that was previously the head
+                // Grow: keep the new head, assign fresh rainbow hue to the segment that was previously the head
                 const newHue = getNextBodyHue();
                 if (snake.length > 1) {
                     snake[1].hue = newHue;
@@ -248,7 +248,7 @@
 
         function init() {
             initStars(); setupControls(); setupSwipeControls(); updateScoreDisplay();
-            debugEl.innerText = 'v16.3.0 - growth fixed + tongue fix';
+            debugEl.innerText = 'v16.3.1 - growth + tongue + body draw fixed';
             startGame(); gameLoop();
         }
         init();
