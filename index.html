@@ -34,7 +34,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v16.2.0 - iOS Safari optimized + swipe + PWA</div>
+    <div id="debug">v16.3.0 - growth fixed + tongue fix</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -117,7 +117,7 @@
             for (let i = snake.length - 1; i >= 1; i--) {
                 const seg = snake[i]; const prevSeg = snake[i - 1];
                 const x1 = seg.x * GRID + GRID / 2; const y1 = seg.y * GRID + GRID / 2;
-                const x2 = prevSeg.x * GRID + GRID / 2; const y2 = prevSeg.y * GRID + GRID / 2;
+                const x2 = prevSeg.x * GRID + GRID / 2; const y2 = prevSeg.y * GRID / 2;
                 const distFromTail = (snake.length - 1) - i; const taperSegments = 7;
                 let taperFactor = (distFromTail < taperSegments) ? bodyWidth * (0.35 + 0.65 * (distFromTail / (taperSegments - 1))) : bodyWidth;
                 ctx.lineWidth = GRID * taperFactor;
@@ -149,7 +149,7 @@
             const forkLen = GRID * 0.40 * (0.35 + 0.65 * inOut); const angleL = angle - 0.46 + sideFlick; const angleR = angle + 0.46 - sideFlick;
             let endLX = stemEndX + Math.cos(angleL) * forkLen; let endLY = stemEndY + Math.sin(angleL) * forkLen; let ctrlLX = stemEndX + Math.cos(angleL) * (forkLen * 0.5) + Math.cos(angleL + 1.05) * 3; let ctrlLY = stemEndY + Math.sin(angleL) * (forkLen * 0.5) + Math.sin(angleL + 1.05) * 3;
             ctx.beginPath(); ctx.moveTo(stemEndX, stemEndY); ctx.quadraticCurveTo(ctrlLX, ctrlLY, endLX, endLY); ctx.stroke();
-            let endRX = stemEndX + Math.cos(angleR) * forkLen; let endRY = stemEndY + Math.sin(angleR) * forkLen; let ctrlRX = stemEndX + Math.cos(angleR) * (forkLen * 0.5) + Math.cos(angleR - 1.05) * 3; let ctrlRY = stemEndY + Math.sin(angleR - 1.05) * 3;
+            let endRX = stemEndX + Math.cos(angleR) * forkLen; let endRY = stemEndY + Math.sin(angleR) * forkLen; let ctrlRX = stemEndX + Math.cos(angleR) * (forkLen * 0.5) + Math.cos(angleR - 1.05) * 3; let ctrlRY = stemEndY + Math.sin(angleR) * (forkLen * 0.5) + Math.sin(angleR - 1.05) * 3;
             ctx.beginPath(); ctx.moveTo(stemEndX, stemEndY); ctx.quadraticCurveTo(ctrlRX, ctrlRY, endRX, endRY); ctx.stroke();
         }
 
@@ -173,19 +173,35 @@
 
         function updateSnake() {
             if (!gameRunning) return;
-            const head = snake[0]; const newHead = { x: head.x + dx, y: head.y + dy };
+            const head = snake[0];
+            const newHead = { x: head.x + dx, y: head.y + dy, hue: head.hue };
             if (newHead.x < 0 || newHead.x >= COLS || newHead.y < 0 || newHead.y >= ROWS) { endGame(); return; }
             if (snake.some(s => s.x === newHead.x && s.y === newHead.y)) { endGame(); return; }
             snake.unshift(newHead);
             if (newHead.x === food.x && newHead.y === food.y) {
-                score++; updateScoreDisplay();
-                const newHue = getNextBodyHue(); const tail = snake[snake.length - 1]; snake.push({ x: tail.x, y: tail.y, hue: newHue }); snake.pop();
-                const fx = food.x * GRID + GRID / 2; const fy = food.y * GRID + GRID / 2;
-                eatEffects.push({ x: fx, y: fy, life: 26, type: 'ring' }); eatEffects.push({ x: fx, y: fy, life: 17, type: 'poof' });
-                for (let p = 0; p < 2; p++) { eatEffects.push({ x: fx + (Math.random() - 0.5) * 10, y: fy + (Math.random() - 0.5) * 10, life: 11 + Math.random() * 7, type: 'poof' }); }
+                score++;
+                updateScoreDisplay();
+                // Grow: keep the new head, assign fresh rainbow hue to the new body segment that was previously the head
+                const newHue = getNextBodyHue();
+                if (snake.length > 1) {
+                    snake[1].hue = newHue;
+                }
+                const fx = food.x * GRID + GRID / 2;
+                const fy = food.y * GRID + GRID / 2;
+                eatEffects.push({ x: fx, y: fy, life: 26, type: 'ring' });
+                eatEffects.push({ x: fx, y: fy, life: 17, type: 'poof' });
+                for (let p = 0; p < 2; p++) {
+                    eatEffects.push({ x: fx + (Math.random() - 0.5) * 10, y: fy + (Math.random() - 0.5) * 10, life: 11 + Math.random() * 7, type: 'poof' });
+                }
                 placeFood();
-            } else { snake.pop(); }
-            if (score > highScore) { highScore = score; localStorage.setItem('highScore', highScore); updateScoreDisplay(); }
+            } else {
+                snake.pop();
+            }
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem('highScore', highScore);
+                updateScoreDisplay();
+            }
         }
 
         function draw() { frameCount++; const t = Date.now() / 1000; ctx.fillStyle = '#0a001f'; ctx.fillRect(0, 0, canvas.width, canvas.height); drawStarfield(t); drawSnakeBody(); drawHead(t); drawFood(); updateAndDrawEffects(); }
@@ -232,7 +248,7 @@
 
         function init() {
             initStars(); setupControls(); setupSwipeControls(); updateScoreDisplay();
-            debugEl.innerText = 'v16.2.0 - iOS Safari optimized + swipe + PWA';
+            debugEl.innerText = 'v16.3.0 - growth fixed + tongue fix';
             startGame(); gameLoop();
         }
         init();
