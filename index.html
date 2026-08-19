@@ -19,10 +19,38 @@
         canvas { display: block; width: 100%; height: 100%; touch-action: none; }
         #restart { position: absolute; top: 12px; right: 12px; width: 36px; height: 36px; border-radius: 50%; background: #0088ff; color: white; border: 2px solid #ffffff55; font-size: 18px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,136,255,0.4); z-index: 20; cursor: pointer; -webkit-tap-highlight-color: transparent; }
         #restart:active { background: #0066cc; transform: scale(0.9); }
-        .controls { margin-top: 16px; display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%; max-width: 280px; }
-        .dpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; width: 100%; }
-        button { background: #333; color: white; border: 1px solid #ffffff33; border-radius: 14px; font-size: 26px; width: 100%; aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent; transition: transform 0.05s ease, background 0.05s ease; }
-        button:active { background: #444; transform: scale(0.92); }
+        .controls { margin-top: 16px; display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 220px; }
+        .dpad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 8px;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+        }
+        .dpad button {
+            background: #333;
+            color: white;
+            border: 1px solid #ffffff33;
+            border-radius: 14px;
+            font-size: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            transition: transform 0.05s ease, background 0.05s ease;
+            width: 100%;
+            height: 100%;
+            padding: 0;
+        }
+        .dpad button:active { background: #555; transform: scale(0.92); }
+        .dpad .empty { visibility: hidden; pointer-events: none; }
+        #up { grid-column: 2; grid-row: 1; }
+        #left { grid-column: 1; grid-row: 2; }
+        #down { grid-column: 2; grid-row: 2; }
+        #right { grid-column: 3; grid-row: 2; }
         #gameOver { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.94); padding: 24px 20px; border-radius: 16px; text-align: center; display: none; border: 2px solid #ff00ff; width: 86%; max-width: 240px; box-sizing: border-box; z-index: 30; }
         #gameOver h2 { color: #ff3333; margin: 0 0 12px 0; font-size: 1.5em; animation: pulse-red 1.1s infinite ease-in-out; }
         @keyframes pulse-red { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.08); opacity: 0.92; } }
@@ -34,7 +62,7 @@
 <body>
     <h1>Rainbow Snake</h1>
     <div id="score">Score: 0 | High Score: 0</div>
-    <div id="debug">v16.3.1 - growth + tongue + body draw fixed</div>
+    <div id="debug">v16.4.0 - proper D-pad layout</div>
 
     <div id="game-container">
         <canvas id="game" width="400" height="400"></canvas>
@@ -47,11 +75,16 @@
     </div>
 
     <div class="controls">
-        <button id="up" aria-label="Up">↑</button>
         <div class="dpad">
+            <div class="empty"></div>
+            <button id="up" aria-label="Up">↑</button>
+            <div class="empty"></div>
             <button id="left" aria-label="Left">←</button>
             <button id="down" aria-label="Down">↓</button>
             <button id="right" aria-label="Right">→</button>
+            <div class="empty"></div>
+            <div class="empty"></div>
+            <div class="empty"></div>
         </div>
     </div>
 
@@ -181,7 +214,6 @@
             if (newHead.x === food.x && newHead.y === food.y) {
                 score++;
                 updateScoreDisplay();
-                // Grow: keep the new head, assign fresh rainbow hue to the segment that was previously the head
                 const newHue = getNextBodyHue();
                 if (snake.length > 1) {
                     snake[1].hue = newHue;
@@ -248,7 +280,7 @@
 
         function init() {
             initStars(); setupControls(); setupSwipeControls(); updateScoreDisplay();
-            debugEl.innerText = 'v16.3.1 - growth + tongue + body draw fixed';
+            debugEl.innerText = 'v16.4.0 - proper D-pad layout';
             startGame(); gameLoop();
         }
         init();
